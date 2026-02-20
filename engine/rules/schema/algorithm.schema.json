@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game.pitpal.dev/schemas/algorithm.schema.json",
+  "title": "Algorithm Schema",
+
+  "$defs": {
+    "Algorithm": {
+      "type": "object",
+      "required": [ "Type", "SubType","Param"],
+      "properties": {
+        "Type": {
+	   "type":"string",
+	   "const": "enum"
+        },
+
+        "SubType": {
+          "type": "string",
+          "enum": ["classic", "silver", "snake", "mount"]
+	  },
+	"Param":{ 		
+	   "$ref": "parameter.schema.json#/$defs/Parameter"
+      	}
+      },
+      "additionalProperties": false
+    }
+  }
+}

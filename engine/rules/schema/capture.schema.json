@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game.pitpal.dev/schemas/capture.schema.json",
+  "title": "Capture Schema",
+
+  "$defs": {
+    "Capture": {
+      "type": "object",
+      "required": [ "Type", "SubType","Param"],
+      "properties": {
+        "Type": {
+	   "type":"string",
+	   "const": "enum"
+        },
+
+        "SubType": {
+          "type": "string",
+          "enum": ["beyond", "opposite", "adjacent"]
+	  },
+        
+	"Param":{ 		
+	   "$ref": "parameter.schema.json#/$defs/Parameter"
+      	}
+      },
+      "additionalProperties": false
+    }
+  }
+}
