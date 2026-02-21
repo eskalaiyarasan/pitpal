@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game.pitpal.dev/schemas/boolean.schema.json",
+  "title": "Boolean Schema",
+
+  "$defs": {
+    "Bool": {
+      "type": "object",
+      "required": [ "Param"],
+      "properties": {
+          "Param": { "$ref": "parameter.schema.json#/$defs/Parameter" }
+          }
+        }
+    }
+}

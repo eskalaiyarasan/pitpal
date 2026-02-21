@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game.pitpal.dev/schemas/integer.schema.json",
+  "title": "integer Schema",
+
+  "$defs": {
+    "Integer": {
+      "type": "object",
+      "required": [ "Type", "Param"],
+      "properties": {
+        "Type": {
+	   "type":"string",
+	   "const": "integer"
+        },
+
+	"Param":{ 		
+	   "$ref": "parameter.schema.json#/$defs/Parameter"
+      	}
+      }
+    }
+  }
+}

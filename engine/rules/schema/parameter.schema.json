@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game.pitpal.dev/schemas/parameter.schema.json",
+  "title": "Game Parameter",
+
+  "$defs": {
+    "Parameter": {
+      "type": "object",
+      "required": ["Default", "Config"],
+
+      "properties": {
+        "Default": {
+          "type": "string"
+        },
+
+        "Value": {
+          "type": "string"
+        },
+
+        "Options": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "Enabled": {
+          "type": "boolean",
+          "default": true
+        },
+
+        "Config": {
+          "type": "string",
+          "enum": ["fixed", "user", "auto", "flexi"]
+        },
+
+        "Min": {
+          "type": "string"
+        },
+
+        "Max": {
+          "type": "string"
+        }
+      },
+
+      "additionalProperties": false,
+
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "Config": { "const": "flexi" }
+            }
+          },
+          "then": {
+            "required": ["Options"],
+            "properties": {
+              "Options": {
+                "type": "array"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "Options": {
+                "type": ["null"]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
