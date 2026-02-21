@@ -1,90 +1,97 @@
 {
   "vRule": "r00.00.001",
-  "vSchemaN": "s00.00.001",
+  "vSchema": "s00.00.002",
   "board": {
-    "specialPits": "[]",
     "pitsPerSide": {
-      "Type": "integer",
       "Param": {
+        "Options": null,
         "Default": "7",
         "Value": "7",
         "Enabled": true,
         "Config": "fixed",
         "Min": "7",
         "Max": "7"
-      }
+      },
+      "Type": "integer"
     },
     "nSide": {
-      "Type": "integer",
       "Param": {
+        "Options": null,
         "Default": "2",
         "Value": "2",
         "Enabled": true,
         "Config": "fixed",
         "Min": "2",
         "Max": "2"
-      }
+      },
+      "Type": "integer"
     },
     "nSeeds": {
-      "Type": "integer",
       "Param": {
+        "Options": null,
         "Default": "6",
         "Value": "6",
         "Enabled": true,
         "Config": "fixed",
         "Min": "6",
         "Max": "6"
-      }
+      },
+      "Type": "integer"
     }
   },
   "algorithm": {
-    "Type": "enum",
-    "SubType": "classic",
     "Param": {
+      "Options": null,
       "Default": "classic",
       "Value": "classic",
       "Enabled": true,
-      "Config": "",
+      "Config": "fixed",
       "Min": "classic",
       "Max": "classic"
-    }
+    },
+    "Type": "enum",
+    "SubType": "classic"
   },
   "capture": {
-    "Type": "enum",
-    "SubType": "beyond",
     "Param": {
+      "Options": null,
       "Default": "beyond",
       "Value": "beyond",
       "Enabled": true,
       "Config": "fixed",
       "Min": "beyond",
       "Max": "beyond"
-    }
+    },
+    "Type": "enum",
+    "SubType": "beyond"
   },
   "timelimit": {
-    "Type": "integer",
     "Param": {
-      "Default": "100",
-      "Value": "01000",
+      "Options": null,
+      "Default": "1000",
+      "Value": "1000",
       "Enabled": false,
-      "Config": "",
-      "Min": "1000",
-      "Max": "10000"
-    }
+      "Config": "fixed",
+      "Min": "100",
+      "Max": "1000"
+    },
+    "Type": "integer"
   },
   "nPlayers": {
-    "Type": "integer",
     "Param": {
+      "Options": null,
       "Default": "2",
       "Value": "2",
       "Enabled": true,
       "Config": "fixed",
       "Min": "2",
       "Max": "2"
-    }
+    },
+    "Type": "integer"
   },
   "direction": {
     "Param": {
+      "Options": null,
       "Default": "1",
       "Value": "1",
       "Enabled": true,
@@ -94,14 +101,15 @@
     }
   },
   "mod": {
-    "Type": "integer",
     "Param": {
+      "Options": null,
       "Default": "5",
       "Value": "5",
       "Enabled": true,
       "Config": "fixed",
       "Min": "5",
       "Max": "5"
-    }
+    },
+    "Type": "integer"
   }
 }

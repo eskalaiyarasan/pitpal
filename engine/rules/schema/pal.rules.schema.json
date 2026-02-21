@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://game.pitpal.dev/schemas/game.rule.schema.json",
+  "$id": "https://game.pitpal.dev/schemas/pal.rule.schema.json",
 
   "type": "object",
 
   "properties": {
     "vRule": { "type": "string" },
-    "vSchemaN": { "type" : "string", "const" : "s00.00.001" },
+    "vSchema": { "type" : "string", "const" : "s00.00.002" },
 
     "board": {
       "$ref": "board.schema.json#/$defs/Board"
