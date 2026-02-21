@@ -1,3 +1,24 @@
+#!/usr/bin/env python3
+# Copyright (C) 2026 Pitpal
+#
+# This file is part of PitPal.
+#
+# PitPal is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# either version 3 of the License, or (at your option) any later version.
+#
+# PitPal is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with PitPal. If not, see <https://www.gnu.org/licenses/>.
+#    Author    :  Kalaiyarasan Es
+#    File name :  pitpal/kit/generator/pitpal_rules_creator_tk.py
+#    Date      :  21/02/2026
+#######################################################################
 import json
 import os
 import tkinter as tk
@@ -157,46 +178,57 @@ class RuleGenerator:
 
         ttk.Label(frame, text=path).pack(side="left")
 
-        field_type = schema.get("type")
+        fld_type =[]
+        fldtype = schema.get("type")
         default = schema.get("default", "")
-
-        if field_type == "string":
-            var = tk.StringVar(value=default)
-
-            if "enum" in schema:
-                widget = ttk.Combobox(
-                    frame,
-                    textvariable=var,
-                    values=schema["enum"],
-                    state="readonly"
-                )
-            elif "const" in schema:
-                const = schema["const"]
-                var = tk.StringVar(value=str(const) )
-                widget = ttk.Label(frame,textvariable=var)
-            else:
-                widget = ttk.Entry(frame, textvariable=var)
-
-            widget.pack(side="right")
-
-        elif field_type == "boolean":
-            var = tk.BooleanVar(value=default)
-            widget = ttk.Checkbutton(frame, variable=var)
-            widget.pack(side="right")
-
-        elif field_type == "integer":
-            var = tk.StringVar(value=str(default))
-            widget = ttk.Entry(frame, textvariable=var)
-            widget.pack(side="right")
-
-        elif field_type == "array":
-            self.data_store[path] = []
-            def open_array_editor():
-                self.open_array_popup(path, schema)
-            widget = ttk.Button(frame,text="Edit Array",command=open_array_editor)
-            widget.pack(side="right")
+        if  isinstance(fldtype, list):
+            fld_type = fld_type + fldtype
         else:
-            return
+            fld_type.append(fldtype)
+
+        for  field_type in fld_type:
+            if field_type == "string":
+                var = tk.StringVar(value=default)
+
+                if "enum" in schema:
+                    widget = ttk.Combobox(
+                        frame,
+                        textvariable=var,
+                        values=schema["enum"],
+                        state="readonly"
+                    )
+                elif "const" in schema:
+                    const = schema["const"]
+                    var = tk.StringVar(value=str(const) )
+                    widget = ttk.Label(frame,textvariable=var)
+                else:
+                    widget = ttk.Entry(frame, textvariable=var)
+
+                widget.pack(side="right")
+
+            elif field_type == "boolean":
+                var = tk.BooleanVar(value=default)
+                widget = ttk.Checkbutton(frame, variable=var)
+                widget.pack(side="right")
+    
+            elif field_type == "integer":
+                var = tk.StringVar(value=str(default))
+                widget = ttk.Entry(frame, textvariable=var)
+                widget.pack(side="right")
+
+            elif field_type == "array":
+                def open_array_editor():
+                    self.data_store[path] = []
+                    self.open_array_popup(path, schema)
+                widget = ttk.Button(frame,text="Edit Array",command=open_array_editor)
+                widget.pack(side="right")
+            elif field_type == "null":
+                def open_null_editor():
+                    self.data_store[path] = None
+                widget = ttk.Button(frame,text="Edit Array",command=open_null_editor)
+                widget.pack(side="right")
+            else:
+                return
 
         self.widgets[path] = var
 
@@ -204,7 +236,7 @@ class RuleGenerator:
         if parent_key:
             frame = ttk.Frame(self.scrollable_frame)
             frame.pack(fill="x", pady=5, padx=20)
-            ttk.Label(frame, text="--- " + str(parent_key) +"---").pack(side="left")
+            ttk.Label(frame, text="----" + str(parent_key) +"----").pack(side="left")
 
         properties = schema.get("properties", {})
 
@@ -228,8 +260,16 @@ class RuleGenerator:
             ttk.Label(frame, text=key).pack(side="left")
 
             field_type = prop.get("type")
-            default = prop.get("default", "")
+            if  isinstance(field_type, list):
+                for sub_type in field_type:
+                    self.build_inside_form(frame, full_key, prop,sub_type)
+            else:
+                self.build_inside_form(frame, full_key, prop,field_type)
 
+
+    def build_inside_form(self, frame , full_key,prop,field_type ):
+            default = prop.get("default", "")
+            var=None
             if field_type == "boolean":
                 var = tk.BooleanVar(value=default)
                 widget = ttk.Checkbutton(frame, variable=var)
@@ -258,13 +298,17 @@ class RuleGenerator:
                 widget.pack(side="right")
 
             elif field_type == "array":
-                var = tk.StringVar(value="[]")
                 def open_array_editor(full_key=full_key, prop=prop):
                     self.open_array_popup(full_key, prop)
                 widget = ttk.Button(frame,text="Edit Array",command=open_array_editor)
                 widget.pack(side="right")
+            elif field_type == "null":
+                def open_null_editor(full_key=full_key ):
+                    self.data_store[full_key] = None
+                widget = ttk.Button(frame,text="set NULL",command=open_null_editor)
+                widget.pack(side="right")
             else:
-                continue
+                return
 
             self.widgets[full_key] = var
     
