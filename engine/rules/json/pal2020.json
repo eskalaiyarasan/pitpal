@@ -1,0 +1,115 @@
+{
+  "vRule": "r00.00.001",
+  "vSchema": "s00.00.002",
+  "board": {
+    "pitsPerSide": {
+      "Param": {
+        "Options": null,
+        "Default": "7",
+        "Value": "7",
+        "Enabled": true,
+        "Config": "fixed",
+        "Min": "7",
+        "Max": "7"
+      },
+      "Type": "integer"
+    },
+    "nSide": {
+      "Param": {
+        "Options": null,
+        "Default": "2",
+        "Value": "2",
+        "Enabled": true,
+        "Config": "fixed",
+        "Min": "2",
+        "Max": "2"
+      },
+      "Type": "integer"
+    },
+    "nSeeds": {
+      "Param": {
+        "Options": null,
+        "Default": "6",
+        "Value": "6",
+        "Enabled": true,
+        "Config": "fixed",
+        "Min": "6",
+        "Max": "6"
+      },
+      "Type": "integer"
+    }
+  },
+  "algorithm": {
+    "Param": {
+      "Options": null,
+      "Default": "classic",
+      "Value": "classic",
+      "Enabled": true,
+      "Config": "fixed",
+      "Min": "classic",
+      "Max": "classic"
+    },
+    "Type": "enum",
+    "SubType": "classic"
+  },
+  "capture": {
+    "Param": {
+      "Options": null,
+      "Default": "beyond",
+      "Value": "beyond",
+      "Enabled": true,
+      "Config": "fixed",
+      "Min": "beyond",
+      "Max": "beyond"
+    },
+    "Type": "enum",
+    "SubType": "beyond"
+  },
+  "timelimit": {
+    "Param": {
+      "Options": null,
+      "Default": "1000",
+      "Value": "1000",
+      "Enabled": false,
+      "Config": "fixed",
+      "Min": "100",
+      "Max": "1000"
+    },
+    "Type": "integer"
+  },
+  "nPlayers": {
+    "Param": {
+      "Options": null,
+      "Default": "2",
+      "Value": "2",
+      "Enabled": true,
+      "Config": "fixed",
+      "Min": "2",
+      "Max": "2"
+    },
+    "Type": "integer"
+  },
+  "direction": {
+    "Param": {
+      "Options": null,
+      "Default": "1",
+      "Value": "1",
+      "Enabled": true,
+      "Config": "fixed",
+      "Min": "1",
+      "Max": "1"
+    }
+  },
+  "mod": {
+    "Param": {
+      "Options": null,
+      "Default": "5",
+      "Value": "5",
+      "Enabled": false,
+      "Config": "fixed",
+      "Min": "5",
+      "Max": "5"
+    },
+    "Type": "integer"
+  }
+}

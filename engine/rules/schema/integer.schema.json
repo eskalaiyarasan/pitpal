@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/eskalaiyarasan/pitpal/tree/main/engine/rules/schema/integer.schema.json",
+  "$id": "integer.schema.json",
   "title": "integer Schema",
 
   "$defs": {

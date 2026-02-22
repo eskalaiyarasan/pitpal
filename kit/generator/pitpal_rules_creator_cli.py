@@ -19,16 +19,6 @@
 #    File name :  pitpal/kit/generator/pitpal_rules_creator_cli.py
 #    Date      :  21/02/2026
 #######################################################################
-
-import json
-import os
-import argparse
-import sys
-from copy import deepcopy
-from jsonschema import Draft202012Validator
-from referencing import Registry, Resource
-
-
 """
 python rules_cli.py \
   --schema schemas/game.rule.schema.json \
@@ -40,104 +30,111 @@ python rules_cli.py \
   --output rules/flexi.json
   --help
 """
-# ---------------------------------------------------
-# Schema Loader
-# ---------------------------------------------------
+#######################################################################
+import json
+import os
+import argparse
+import sys
+import re
+import ast
+from copy import deepcopy
+from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
 
 def load_schema(schema_path):
-    base_dir = os.path.dirname(schema_path)
-
-    with open(schema_path, "r") as f:
-        root_schema = json.load(f)
-
+    curdir = os.getcwd()
+    directory, filename = os.path.split(schema_path)
+    os.chdir(directory)
     registry = Registry()
-
-    for filename in os.listdir(base_dir):
+    for filename in os.listdir():
         if filename.endswith(".json"):
-            full_path = os.path.join(base_dir, filename)
-            with open(full_path, "r") as sf:
+            with open(filename) as sf:
                 schema_data = json.load(sf)
 
-            schema_id = schema_data.get("$id", f"file://{full_path}")
+            schema_id = schema_data.get("$id", filename)
 
             registry = registry.with_resource(
                 schema_id,
                 Resource.from_contents(schema_data)
             )
-
+    root_schema="{}"
+    with open(filename) as f:
+        root_schema = json.load(f)
     validator = Draft202012Validator(root_schema, registry=registry)
+    os.chdir(curdir)
+    return validator
+def check_matching(validator,json_data):
+    try:
+        validator.validate(json_data)
+        return True
+    except:
+        return False
 
-    return root_schema, validator
 
-
-# ---------------------------------------------------
-# Schema Utilities
-# ---------------------------------------------------
-
-def get_schema_for_key(schema, key_path):
-    keys = key_path.split(".")
-    current = schema
-
-    for key in keys:
-        if "properties" in current and key in current["properties"]:
-            current = current["properties"][key]
-        else:
+def get_element_in_array(data,key):
+    match = re.match(r"(\w+)\[(\d+)\]", key)
+    if match:
+        name = match.group(1)
+        index = int(match.group(2))
+        if name not in data or  isinstance(data[name], list):
             return None
+        if len(data[name])  > index:
+               return data[name][index] 
+    return None
 
-    return current
+def set_element_in_array(data,key,value):
+    match = re.match(r"(\w+)\[(\d+)\]", key)
+    if match:
+        name = match.group(1)
+        index = int(match.group(2))
+        if name not in data or  isinstance(data[name], list):
+            return False
+        if len(data[name] ) > index:
+               t = type( data[name][index])
+               data[name][index] = t(value)
+               return true
+        elif len(data[name]) == index:
+               data[name].append(value)
+               return True
+    return False
 
-
-def convert_value_by_schema(value, schema):
-    if "const" in schema:
-        raise ValueError("Cannot modify const property")
-
-    field_type = schema.get("type")
-
-    if isinstance(field_type, list):
-        field_type = [t for t in field_type if t != "null"][0]
-
-    if field_type == "boolean":
-        return value.lower() == "true"
-
-    if field_type == "integer":
-        return int(value)
-
-    if field_type == "array":
-        items_schema = schema.get("items", {})
-        item_type = items_schema.get("type", "string")
-        values = [v.strip() for v in value.split(",")]
-
-        converted = []
-        for v in values:
-            if item_type == "integer":
-                converted.append(int(v))
-            elif item_type == "boolean":
-                converted.append(v.lower() == "true")
-            else:
-                converted.append(v)
-        return converted
-
-    return value  # string default
+def parse_frame_array_if(value):
+    value = value.rstrip()
+    value = value.lstrip()
+    if value[0] == '[' and value[-1] == ']':
+         return ast.literal_eval(value)
+    return None
 
 
+    
 # ---------------------------------------------------
 # JSON Utilities
 # ---------------------------------------------------
 
-def apply_set(data, schema, key_path, value):
-    schema_node = get_schema_for_key(schema, key_path)
-    if not schema_node:
-        raise ValueError(f"Invalid key: {key_path}")
-
-    converted = convert_value_by_schema(value, schema_node)
-
+def apply_set(data,  key_path, value):
     keys = key_path.split(".")
     current = data
-
+    v1 = parse_frame_array_if(value) 
+    if v1 != None:
+        value = v1
+    deco="  "
     for key in keys[:-1]:
-        current = current.setdefault(key, {})
-
-    current[keys[-1]] = converted
+        #print(deco+"key:",key)
+        deco = deco+"  "
+        k1 =get_element_in_array(current , key) 
+        if k1 != None:
+            current = k1
+        elif key not in current:
+            return
+        else:
+            current = current[key]
+    if  not set_element_in_array(current,key[-1],value):
+        t = type( current[keys[-1]] )
+        if t == bool:
+            value = int(value)
+        current[keys[-1]] = t(value)
+        #print(deco+"key:",keys[-1] ,t, t(value) , value)
+    
 
 
 def apply_unset(data, key_path):
@@ -150,6 +147,7 @@ def apply_unset(data, key_path):
         current = current[key]
 
     current.pop(keys[-1], None)
+    return current
 
 
 def deep_merge(base, patch):
@@ -183,8 +181,9 @@ def main():
     with open(args.sample, "r") as f:
         rule_data = json.load(f)
 
-    # Load schema
-    schema, validator = load_schema(args.schema)
+    # Load schema  
+    if args.schema:
+        validator = load_schema(args.schema)
 
     # Apply patch
     if args.patch:
@@ -199,26 +198,25 @@ def main():
                 print(f"Invalid format: {entry}")
                 sys.exit(1)
             key, value = entry.split("=", 1)
-            apply_set(rule_data, schema, key.strip(), value.strip())
+            apply_set(rule_data,  key.strip(), value.strip())
 
     # Apply unset
     if args.unset:
         for key in args.unset:
             apply_unset(rule_data, key.strip())
 
-    # Validate
-    try:
-        validator.validate(rule_data)
-    except Exception as e:
-        print("Validation failed:")
-        print(e)
-        sys.exit(1)
 
     # Write output
     with open(args.output, "w") as f:
         json.dump(rule_data, f, indent=2)
+    print("json rule generated successfully.")
 
-    print("✅ Rule generated successfully.")
+    result = check_matching(validator , rule_data)
+
+    if result:
+        print("✅ Rule generated and Validated successfully.")
+    else:
+        print("X Rule Validation failed for the given Schema.")
     sys.exit(0)
 
 
