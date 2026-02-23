@@ -105,7 +105,7 @@
       "Options": null,
       "Default": "5",
       "Value": "5",
-      "Enabled": false,
+      "Enabled": true,
       "Config": "fixed",
       "Min": "5",
       "Max": "5"

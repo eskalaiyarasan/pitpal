@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "capture.schema.json",
+  "$id": "engine/rules/schema/capture.schema.json",
   "title": "Capture Schema",
 
   "$defs": {

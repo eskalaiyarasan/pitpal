@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "board.schema.json",
+  "$id": "engine/rules/schema/board.schema.json",
   "title": "Board Schema",
 
   "$defs": {

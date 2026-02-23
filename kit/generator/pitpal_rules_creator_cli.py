@@ -20,7 +20,8 @@
 #    Date      :  21/02/2026
 #######################################################################
 """
-python rules_cli.py \
+#run the cli from base path
+./kit/generator/python rules_cli.py \
   --schema schemas/game.rule.schema.json \
   --sample rules/base.json \
   --set timeSupport.enabled=true \
@@ -42,11 +43,10 @@ from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
 def load_schema(schema_path):
-    curdir = os.getcwd()
     directory, filename = os.path.split(schema_path)
-    os.chdir(directory)
     registry = Registry()
-    for filename in os.listdir():
+    for filename in os.listdir(directory):
+        filename = os.path.join(directory,filename)
         if filename.endswith(".json"):
             with open(filename) as sf:
                 schema_data = json.load(sf)
@@ -61,7 +61,6 @@ def load_schema(schema_path):
     with open(filename) as f:
         root_schema = json.load(f)
     validator = Draft202012Validator(root_schema, registry=registry)
-    os.chdir(curdir)
     return validator
 def check_matching(validator,json_data):
     try:

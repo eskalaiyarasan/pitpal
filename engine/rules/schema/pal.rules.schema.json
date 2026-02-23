@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "pal.rule.schema.json",
+  "$id": "engine/rules/schema/pal.rule.schema.json",
 
   "type": "object",
 

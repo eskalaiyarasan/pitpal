@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "boolean.schema.json",
+  "$id": "engine/rules/schema/boolean.schema.json",
   "title": "Boolean Schema",
 
   "$defs": {
