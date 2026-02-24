@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "engine/rules/schema/pal.rule.schema.json",
+  "$id": "engine/rules/schema/pal.rules.schema.json",
 
   "type": "object",
 
@@ -9,25 +9,25 @@
     "vSchema": { "type" : "string", "const" : "s00.00.002" },
 
     "board": {
-      "$ref": "board.schema.json#/$defs/Board"
+      "$ref": "engine/rules/schema/board.schema.json#/$defs/Board"
     },
     "algorithm": {
-      "$ref": "algorithm.schema.json#/$defs/Algorithm"
+      "$ref": "engine/rules/schema/algorithm.schema.json#/$defs/Algorithm"
     },
     "capture": {
-      "$ref": "capture.schema.json#/$defs/Capture"
+      "$ref": "engine/rules/schema/capture.schema.json#/$defs/Capture"
     },
     "timelimit": {
-      "$ref": "integer.schema.json#/$defs/Integer"
+      "$ref": "engine/rules/schema/integer.schema.json#/$defs/Integer"
     },
     "nPlayers": {
-      "$ref": "integer.schema.json#/$defs/Integer"
+      "$ref": "engine/rules/schema/integer.schema.json#/$defs/Integer"
     },
     "direction": {
-      "$ref": "boolean.schema.json#/$defs/Bool"
+      "$ref": "engine/rules/schema/boolean.schema.json#/$defs/Bool"
     },
     "mod": {
-      "$ref": "integer.schema.json#/$defs/Integer"
+      "$ref": "engine/rules/schema/integer.schema.json#/$defs/Integer"
     }
   },
 

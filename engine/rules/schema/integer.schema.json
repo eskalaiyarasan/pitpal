@@ -14,7 +14,7 @@
         },
 
 	"Param":{ 		
-	   "$ref": "parameter.schema.json#/$defs/Parameter"
+	   "$ref": "engine/rules/schema/parameter.schema.json#/$defs/Parameter"
       	}
       }
     }

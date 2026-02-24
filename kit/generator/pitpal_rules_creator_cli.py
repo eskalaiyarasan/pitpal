@@ -42,9 +42,166 @@ from copy import deepcopy
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
+from pathlib import Path
+
+
+JSON_TYPE_MAP = {
+    "string": str,
+    "number": float,
+    "integer": int,
+    "boolean": bool,
+    "array": list,
+    "object": dict,
+    "null": type(None),
+}
+
+
+class SchemaTypeResolver:
+    def __init__(self, schema_path: str):
+        self.schema={}
+        self._load_schema(schema_path)
+
+    # ---------------------------
+    # Path Parsing
+    # ---------------------------
+    def _load_schema(self, schema_path):
+        directory, rootfilename = os.path.split(schema_path)
+        for filename in os.listdir(directory):
+            filename = os.path.join(directory,filename)
+            if filename.endswith(".json"):
+                with open(filename) as sf: 
+                    self.schema[filename] = json.load(sf)
+                if filename == schema_path:
+                    self.schema["."] = self.schema[filename]
+
+    def _parse_path(self, path: str):
+        tokens = []
+        parts = path.split(".")
+
+        for part in parts:
+            while True:
+                match = re.match(r"([^\[]+)\[(\d+)\]", part)
+                if match:
+                    tokens.append(match.group(1))
+                    tokens.append(int(match.group(2)))
+                    part = part[match.end():]
+                    if not part:
+                        break
+                else:
+                    tokens.append(part)
+                    break
+
+        return tokens
+
+    # ---------------------------
+    # $ref Resolver
+    # ---------------------------
+    def _resolve_ref(self, ref: str):
+        parts2 = ref.split("#/")
+        parts = parts2[1].split("/")
+        index=parts2[0].rstrip().lstrip()
+
+
+        
+        if index in self.schema:
+                current = self.schema[index]
+        else:
+                raise KeyError(f"$ref path invalid: {ref}")
+
+        for part in parts:
+                if part not in current:
+                    raise KeyError(f"$ref path invalid: {ref}")
+                else:
+                    current = current[part]
+
+        return current
+
+    def _fully_resolve(self, node):
+        """
+        Recursively resolve $ref chains.
+        """
+        if "$ref" in node:
+            node = self._resolve_ref(node["$ref"])
+        return node
+
+    # ---------------------------
+    # Extract Python Type
+    # ---------------------------
+    def _extract_type(self, node):
+        node = self._fully_resolve(node)
+
+        # Handle oneOf / anyOf
+        if "oneOf" in node:
+            return self._merge_types(node["oneOf"])
+
+        if "anyOf" in node:
+            return self._merge_types(node["anyOf"])
+
+        if "type" in node:
+            t = node["type"]
+
+            if isinstance(t, list):
+                return [JSON_TYPE_MAP[x] for x in t if x in JSON_TYPE_MAP]
+
+            return JSON_TYPE_MAP.get(t)
+
+        # If object without explicit type
+        if "properties" in node:
+            return dict
+
+        return None
+
+    def _merge_types(self, schemas):
+        types = []
+        for s in schemas:
+            t = self._extract_type(s)
+            if isinstance(t, list):
+                types.extend(t)
+            elif t:
+                types.append(t)
+
+        # remove duplicates
+        return list(set(types))
+
+    # ---------------------------
+    # Public API
+    # ---------------------------
+    def get_type(self, path: str):
+        tokens = self._parse_path(path)
+        current = self.schema["."]
+
+        for token in tokens:
+            current = self._fully_resolve(current)
+
+            if isinstance(token, str):
+                if "properties" in current and token in current["properties"]:
+                    current = current["properties"][token]
+                else:
+                    print(f"Property '{token}' not found in schema")
+                    raise KeyError(f"Property '{token}' not found in schema")
+
+            elif isinstance(token, int):
+                # must be array
+                resolved_type = self._extract_type(current)
+
+                if resolved_type == list or (
+                    isinstance(resolved_type, list) and list in resolved_type
+                ):
+                    current = current.get("items", {})
+                else:
+                    print(f"Property '{token}' not found in array")
+                    raise TypeError(
+                        f"Attempted array index on non-array type at '{token}'"
+                    )
+
+        return self._extract_type(current)
+
+
+
 def load_schema(schema_path):
-    directory, filename = os.path.split(schema_path)
+    directory, rootfilename = os.path.split(schema_path)
     registry = Registry()
+    root_schema="{}"
     for filename in os.listdir(directory):
         filename = os.path.join(directory,filename)
         if filename.endswith(".json"):
@@ -52,14 +209,13 @@ def load_schema(schema_path):
                 schema_data = json.load(sf)
 
             schema_id = schema_data.get("$id", filename)
-
             registry = registry.with_resource(
                 schema_id,
                 Resource.from_contents(schema_data)
             )
-    root_schema="{}"
-    with open(filename) as f:
-        root_schema = json.load(f)
+
+            if filename == schema_path:
+                root_schema = schema_data 
     validator = Draft202012Validator(root_schema, registry=registry)
     return validator
 def check_matching(validator,json_data):
@@ -81,27 +237,36 @@ def get_element_in_array(data,key):
                return data[name][index] 
     return None
 
-def set_element_in_array(data,key,value):
+def set_element_in_array(t,data,key,value):
     match = re.match(r"(\w+)\[(\d+)\]", key)
+    if t == bool:
+        value = int(value)
     if match:
         name = match.group(1)
         index = int(match.group(2))
         if name not in data or  isinstance(data[name], list):
             return False
         if len(data[name] ) > index:
-               t = type( data[name][index])
                data[name][index] = t(value)
                return true
         elif len(data[name]) == index:
-               data[name].append(value)
+               data[name].append(t(value))
                return True
     return False
 
-def parse_frame_array_if(value):
+def parse_frame_array_if(t,value):
     value = value.rstrip()
     value = value.lstrip()
+    result=[]
     if value[0] == '[' and value[-1] == ']':
-         return ast.literal_eval(value)
+        value=value[1:-1].split(",")
+        for v in value:
+            if t == bool:
+                v = int(v)
+            result.append(t(v))
+        return result
+
+
     return None
 
 
@@ -110,10 +275,28 @@ def parse_frame_array_if(value):
 # JSON Utilities
 # ---------------------------------------------------
 
-def apply_set(data,  key_path, value):
+def apply_set(resolver,data,  key_path, value):
     keys = key_path.split(".")
+    t=None
+    try:
+        t = resolver.get_type(key_path)
+        print("type",t)
+        if isinstance(t,list):
+            if list in t and value.rstrip().startswith('['):
+                t = resolver.get_type(key_path +"[0]")
+            elif type(None) in t and value == "null":
+                t=type(None)
+                value=None
+            elif str in t:
+                t = str
+            elif list in t :
+                key_path = key_path +"[0]"
+                t = resolver.get_type(key_path)
+    except:
+        print("X error resolving ",key_path)
+        sys.exit(1)
     current = data
-    v1 = parse_frame_array_if(value) 
+    v1 = parse_frame_array_if(t,value) 
     if v1 != None:
         value = v1
     deco="  "
@@ -127,8 +310,8 @@ def apply_set(data,  key_path, value):
             return
         else:
             current = current[key]
-    if  not set_element_in_array(current,key[-1],value):
-        t = type( current[keys[-1]] )
+
+    if  not set_element_in_array(t , current,key[-1],value):
         if t == bool:
             value = int(value)
         current[keys[-1]] = t(value)
@@ -183,7 +366,7 @@ def main():
     # Load schema  
     if args.schema:
         validator = load_schema(args.schema)
-
+        resolver = SchemaTypeResolver(args.schema)
     # Apply patch
     if args.patch:
         with open(args.patch, "r") as f:
@@ -197,7 +380,7 @@ def main():
                 print(f"Invalid format: {entry}")
                 sys.exit(1)
             key, value = entry.split("=", 1)
-            apply_set(rule_data,  key.strip(), value.strip())
+            apply_set(resolver,rule_data,key.strip(), value.strip())
 
     # Apply unset
     if args.unset:

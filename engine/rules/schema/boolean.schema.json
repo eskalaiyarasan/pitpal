@@ -8,7 +8,7 @@
       "type": "object",
       "required": [ "Param"],
       "properties": {
-          "Param": { "$ref": "parameter.schema.json#/$defs/Parameter" }
+          "Param": { "$ref": "engine/rules/schema/parameter.schema.json#/$defs/Parameter" }
           }
         }
     }

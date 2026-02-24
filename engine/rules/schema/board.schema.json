@@ -10,19 +10,19 @@
 
         "pitsPerSide": {
           "allOf": [
-            { "$ref": "integer.schema.json#/$defs/Integer" }
+            { "$ref": "engine/rules/schema/integer.schema.json#/$defs/Integer" }
           ]
         },
 
         "nSide": {
           "allOf": [
-            { "$ref": "integer.schema.json#/$defs/Integer" }
+            { "$ref": "engine/rules/schema/integer.schema.json#/$defs/Integer" }
           ]
         },
 
         "nSeeds": {
           "allOf": [
-            { "$ref": "integer.schema.json#/$defs/Integer" }
+            { "$ref": "engine/rules/schema/integer.schema.json#/$defs/Integer" }
           ]
         },
 

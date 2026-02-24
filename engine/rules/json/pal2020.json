@@ -102,7 +102,7 @@
   },
   "mod": {
     "Param": {
-      "Options": null,
+      "Options": "['5', '11']",
       "Default": "5",
       "Value": "5",
       "Enabled": true,
