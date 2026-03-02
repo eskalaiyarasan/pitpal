@@ -222,7 +222,8 @@ def check_matching(validator,json_data):
     try:
         validator.validate(json_data)
         return True
-    except:
+    except Exception as e:
+        print(e)
         return False
 
 
@@ -231,7 +232,7 @@ def get_element_in_array(data,key):
     if match:
         name = match.group(1)
         index = int(match.group(2))
-        if name not in data or  isinstance(data[name], list):
+        if name not in data or  not isinstance(data[name], list):
             return None
         if len(data[name])  > index:
                return data[name][index] 
@@ -240,15 +241,15 @@ def get_element_in_array(data,key):
 def set_element_in_array(t,data,key,value):
     match = re.match(r"(\w+)\[(\d+)\]", key)
     if t == bool:
-        value = int(value)
+        value = value.lower() in ("true", "1")
     if match:
         name = match.group(1)
         index = int(match.group(2))
-        if name not in data or  isinstance(data[name], list):
+        if name not in data or  not isinstance(data[name], list):
             return False
         if len(data[name] ) > index:
                data[name][index] = t(value)
-               return true
+               return True
         elif len(data[name]) == index:
                data[name].append(t(value))
                return True
@@ -262,7 +263,7 @@ def parse_frame_array_if(t,value):
         value=value[1:-1].split(",")
         for v in value:
             if t == bool:
-                v = int(v)
+                v = v.lower() in ("true", "1")
             result.append(t(v))
         return result
 
@@ -292,8 +293,8 @@ def apply_set(resolver,data,  key_path, value):
             elif list in t :
                 key_path = key_path +"[0]"
                 t = resolver.get_type(key_path)
-    except:
-        print("X error resolving ",key_path)
+    except Exception as e:
+        print(e,key_path)
         sys.exit(1)
     current = data
     v1 = parse_frame_array_if(t,value) 
@@ -313,7 +314,7 @@ def apply_set(resolver,data,  key_path, value):
 
     if  not set_element_in_array(t , current,key[-1],value):
         if t == bool:
-            value = int(value)
+            value = value.lower() in ("true", "1")
         current[keys[-1]] = t(value)
         #print(deco+"key:",keys[-1] ,t, t(value) , value)
     
