@@ -60,5 +60,27 @@ class JSU:
     def validate(self):
         return self.validator(self.jsonData)
 
+    def __str__(self):
+        return str(self.jsonData)
+
+    def __getitem__(self, key):
+        value = self._data[key]
+        return value
+
+    def __setitem__(self, key, value):
+        self._data[key] = value
+
+    def __contains__(self, key):
+        return key in self._data
+
+    def __len__(self):
+        return len(self._data)
+
+    def __iter__(self):
+        for item in self._data:
+                yield item
+
+    def to_native(self):
+        return self._data
 
 
