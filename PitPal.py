@@ -1,4 +1,5 @@
 import argparse
+from config.config_builder import ConfigBuilder
 from utils.logging.pitpal_logger import PitPalLogger
 from engine.engine import Engine
 
@@ -14,16 +15,21 @@ def parse_args():
 def main():
     args = parse_args()
 
-    # Initialize logger ONCE here
-    PitPalLogger.initialize(
-        yaml_path=args.config,
-        cli_args={
+    cli_config = {
+        "logging": {
             "level": args.log_level,
             "file": args.log_file,
-        },
-    )
+        }
+    }
 
-    engine = Engine()
+    config = ConfigBuilder(
+        yaml_path=args.config,
+        cli_args=cli_config,
+    ).build()
+
+    PitPalLogger.initialize(config["logging"])
+
+    engine = Engine(config)
     engine.run()
 
 
