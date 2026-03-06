@@ -1,5 +1,5 @@
 import argparse
-from config.config_builder import ConfigBuilder
+from config.core.config_manager as CM
 from utils.logging.pitpal_logger import PitPalLogger
 from engine.engine import Engine
 
@@ -13,13 +13,12 @@ def logging_args(parser):
 
 def argument_list():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--log-level")
-    parser.add_argument("--log-file")
-    parser.add_argument("--log-yaml", default=None)
+    CM.register_log_args(parser)
     return parser.parse_args()
+
 def main():
     args = argument_list()
-    log_config = logging_args(args)
+    log_config = CM.extract_logger_cli(args)
 
     log_config = LogConfigBuilder(log_config).build()
 
