@@ -1,66 +1,54 @@
 import os
 import yaml
+from config.utils.config_loader import config_from_dict, override_config
 from typing import Dict, Any, Optional
+from config.utils.logging_config_database  import PitpalLoggingConfig as PLC
 
 
-class ConfigBuilder:
+class LogConfigBuilder:
     def __init__(
         self,
-        yaml_path: Optional[str] = None,
-        cli_args: Optional[Dict[str, Any]] = None,
+        options
     ):
-        self.yaml_path = yaml_path
-        self.cli_args = cli_args or {}
+        self.default_yaml_file ="config/default/logconfig.yaml"
+        self.data = self.load_config(options)
 
-    def build(self) -> Dict[str, Any]:
-        yaml_config = self._load_yaml()
-        env_config = self._load_env()
-        default_config = self._defaults()
+    def load_config(self, opt: dict) -> PLC:
+        env_data = self._get_env()
 
-        final = self._merge(
-            default_config,
-            yaml_config,
-            env_config,
-            self.cli_args,
-        )
+        #Path for yaml config 
+        path = opt['cfg']
+        if path and os.path.exists(path):
+            pass
+        elif env_data['cfg'] and os.path.exists(env_data['cfg']):
+            path = env_data['cfg']
+        elif os.path.exists(self.default_yaml_file):
+            path = self._default_yaml_file
+        else:
+            raise FileNotFoundError(f"No such file or directory: '{path}'")
 
-        return final
-
-    def _load_yaml(self):
-        if not self.yaml_path:
-            return {}
-
-        with open(self.yaml_path) as f:
-            return yaml.safe_load(f) or {}
-
-    def _load_env(self):
+        #set yaml  data to None.
+        opt['cfg']=None
+        env_data['cfg']=None
+        
+        with open(path) as f:
+            data = yaml.safe_load(f)
+        result = config_from_dict(PLC, data)
+        result = override_config(result,env_data)
+        result = override_config(result, opt)
+        return result
+    
+    def _get_env(self):
         return {
-            "logging": {
                 "level": os.getenv("PITPAL_LOG_LEVEL"),
                 "file": os.getenv("PITPAL_LOG_FILE"),
+                "cfg": os.getenv("PITPAL_LOG_YAML"),
             }
-        }
+    def get(self):
+        return self.data
 
-    def _defaults(self):
-        return {
-            "logging": {
-                "level": "INFO",
-                "file": "logs/pitpal.log",
-                "max_bytes": 1_000_000,
-                "backup_count": 3,
-            }
-        }
 
-    def _merge(self, *configs):
-        result = {}
-        for cfg in configs:
-            result = self._deep_update(result, cfg)
-        return result
 
-    def _deep_update(self, base, new):
-        for k, v in new.items():
-            if isinstance(v, dict):
-                base[k] = self._deep_update(base.get(k, {}), v)
-            elif v is not None:
-                base[k] = v
-        return base
+
+
+

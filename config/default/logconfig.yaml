@@ -1,0 +1,29 @@
+logging:
+  level: INFO
+
+  console:
+    enabled: true
+
+  file:
+    enabled: true
+    path: logs/pitpal.log
+    rotate: size        # size | time
+
+    size_rotation:
+      max_bytes: 2097152     # 2 MB
+      backup_count: 5
+
+    time_rotation:
+      when: midnight         # midnight | H | D
+      interval: 1
+      backup_count: 7
+
+  format:
+    style: text              # text | json
+    pattern: "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+
+  remote:
+    enabled: false
+    type: http               # http | syslog | socket
+    url: http://localhost:9000/log
+    timeout: 1
