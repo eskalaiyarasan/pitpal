@@ -13,6 +13,4 @@ def get_env(prefix):
 
     return result
 
-def get_logger_env():
-    return get_env("LOGGING_")
 
