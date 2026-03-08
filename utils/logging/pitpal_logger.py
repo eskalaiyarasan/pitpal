@@ -1,9 +1,10 @@
+
 import logging
-import os
-from logging.handlers import RotatingFileHandler
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 from pathlib import Path
-from typing import Optional, Dict, Any
-import yaml
+from typing import Optional
+
+from config.interface.logging_config_database import PitpalLoggingConfig
 
 
 class PitPalLogger:
@@ -11,7 +12,7 @@ class PitPalLogger:
     Singleton logger for PitPal.
 
     Usage:
-        PitPalLogger.initialize(...)
+        PitPalLogger.initialize(config)
         logger = PitPalLogger.get_logger()
     """
 
@@ -19,51 +20,70 @@ class PitPalLogger:
     _logger: Optional[logging.Logger] = None
 
     @classmethod
-    def initialize(
-        cls,
-        logging_config: dict) -> None:
+    def initialize(cls, config: PitpalLoggingConfig) -> None:
         """
-        Initialize logging system.
-        Safe to call multiple times (only first call applies).
+        Initialize logging using PitpalLoggingConfig object.
+        Safe to call multiple times.
         """
         if cls._initialized:
             return
 
-        level_str = logging_config["level"]
-        log_file =  logging_config["file"]
-        max_bytes =  logging_config["maxKB"]
-        backup_count =  logging_config["nBackup"]
+        log_cfg = config.logging
 
-
-        level = getattr(logging, level_str.upper(), logging.INFO)
-
-        Path(log_file).parent.mkdir(parents=True, exist_ok=True)
+        level = getattr(logging, log_cfg.level.upper(), logging.INFO)
 
         logger = logging.getLogger("pitpal")
         logger.setLevel(level)
         logger.handlers.clear()
         logger.propagate = False
 
+        # formatter
         formatter = logging.Formatter(
-            "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+            log_cfg.format.pattern,
+            style=log_cfg.format.style,
         )
 
-        # Console
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)
+        # ----------------------
+        # Console logging
+        # ----------------------
+        if log_cfg.console.enabled:
+            console_handler = logging.StreamHandler()
+            console_handler.setFormatter(formatter)
+            logger.addHandler(console_handler)
 
-        # Rotating file
-        file_handler = RotatingFileHandler(
-            log_file,
-            maxBytes=int(max_bytes),
-            backupCount=int(backup_count),
-        )
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
+        # ----------------------
+        # File logging
+        # ----------------------
+        if log_cfg.file.enabled:
+            file_cfg = log_cfg.file
+
+            Path(file_cfg.path).parent.mkdir(parents=True, exist_ok=True)
+
+            if file_cfg.rotate == "size":
+                handler = RotatingFileHandler(
+                    file_cfg.path,
+                    maxBytes=file_cfg.size_rotation.max_bytes,
+                    backupCount=file_cfg.size_rotation.backup_count,
+                )
+
+            elif file_cfg.rotate == "time":
+                handler = TimedRotatingFileHandler(
+                    file_cfg.path,
+                    when=file_cfg.time_rotation.when,
+                    interval=file_cfg.time_rotation.interval,
+                    backupCount=file_cfg.time_rotation.backup_count,
+                )
+
+            else:
+                handler = logging.FileHandler(file_cfg.path)
+
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
 
         cls._logger = logger
         cls._initialized = True
+
+        logger.info("PitPal logger initialized")
 
     @classmethod
     def get_logger(cls) -> logging.Logger:
@@ -84,4 +104,3 @@ class PitPalLogger:
 
         cls._logger = None
         cls._initialized = False
-
