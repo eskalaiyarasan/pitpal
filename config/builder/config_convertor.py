@@ -1,6 +1,6 @@
 
 from dataclasses import is_dataclass, fields
-from typing import get_origin, get_argsi
+from typing import get_origin, get_args
 
 class ConfigConvertor:
 
@@ -29,14 +29,14 @@ class ConfigConvertor:
 
                 if is_dataclass(item_type):
                     kwargs[field.name] = [
-                        config_from_dict(item_type, v) for v in value
+                         ConfigConvertor.config_from_dict(item_type, v) for v in value
                     ]
                 else:
                     kwargs[field.name] = value
 
             # nested dataclass
             elif is_dataclass(field_type):
-                kwargs[field.name] = config_from_dict(field_type, value)
+                kwargs[field.name] =  ConfigConvertor.config_from_dict(field_type, value)
 
             else:
                 kwargs[field.name] = value

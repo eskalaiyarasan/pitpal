@@ -9,7 +9,7 @@ class LoggingConfigManager(Singleton):
 
     def __init__(self):
         if not hasattr(self, "_initialized"):
-            self.prefix="log"
+            self.prefix="logging"     # this has to match with structure in the config.interface.looging_config_database
             self.args=["--log-level","--log-file","--log-yaml"]
             self._initialized = True
 

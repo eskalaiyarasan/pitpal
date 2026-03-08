@@ -3,11 +3,11 @@ import os
 PREFIX = "PITPAL_"
 def get_env(prefix):
     result = {}
-    prefix = PREFIX + prefix
+    prestr = PREFIX + prefix+"_"
     for key, value in os.environ.items():
-        if not key.startswith(prefix):
+        if not key.startswith(prestr):
                 continue
-        path = key[len(prefix):].lower().replace("_", ".")
+        path = prefix+ "." + key[len(prestr):].lower().replace("_", ".")
 
         result[path] = value
 

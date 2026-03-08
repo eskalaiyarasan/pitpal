@@ -14,7 +14,7 @@ def extract_arguments(args, prefix, keys):
         attr = key.replace("-", "_")
         if not hasattr(args, attr):
             raise AttributeError(f"Argument '{attr}' not found in args")
-        path = key[len(prefix):].lower().replace("_", ".")
+        path = prefix+"."+key[len(prefix):].lower().replace("_", ".")
         result[path] = getattr(args, attr)
 
     return result
