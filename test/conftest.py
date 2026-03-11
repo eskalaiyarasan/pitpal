@@ -18,6 +18,7 @@ def logging_config(tmp_path):
     config = PitpalLoggingConfig(
         logging=LoggingConfig(
             level="DEBUG",
+            yaml="config/default/logconfig.yaml",
 
             console=ConsoleLoggingConfig(
                 enabled=True

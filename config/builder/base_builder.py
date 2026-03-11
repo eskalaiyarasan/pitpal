@@ -3,13 +3,34 @@ from config.builder.config_convertor import ConfigConvertor
 import os
 
 def merge_cli_env(cli_args: dict, env_vars: dict) -> dict:
-    result = env_vars.copy()
+    """
+    Merge two flat dot-path dictionaries and convert to nested dict.
+    dict1 overrides dict2.
+    """
+    dict1 = cli_args
+    dict2 = env_vars
 
-    for k, v in cli_args.items():
-        if v is not None:
-            result[k] = v
+    merged = {}
+
+    # dict2 first (lower priority)
+    merged.update(dict2)
+
+    # dict1 overrides
+    merged.update(dict1)
+
+    result = {}
+
+    for path, value in merged.items():
+        keys = path.split(".")
+        cur = result
+
+        for key in keys[:-1]:
+            cur = cur.setdefault(key, {})
+
+        cur[keys[-1]] = value
 
     return result
+
 
 def get_yaml_file(cli_args, env_vars, default_yaml):
     if cli_args.get("yaml") and os.path.exists(cli_args.get("yaml")):

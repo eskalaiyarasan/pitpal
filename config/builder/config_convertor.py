@@ -8,7 +8,7 @@ class ConfigConvertor:
     def config_from_dict(dataclass_type, data: dict):
 
         if not is_dataclass(dataclass_type):
-            return data
+            return None
 
         kwargs = {}
 

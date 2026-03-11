@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+module_name="logging"
+
 @dataclass(frozen=True)
 class SizeRotationConfig:
     max_bytes: int
@@ -48,6 +50,7 @@ class LoggingConfig:
     file: FileLoggingConfig
     format: FormatConfig
     remote: RemoteLoggingConfig
+    yaml: str
 
 @dataclass(frozen=True)
 class PitpalLoggingConfig:
