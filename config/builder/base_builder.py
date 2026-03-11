@@ -2,32 +2,36 @@ from config.builder.yaml_loader import YamlLoader
 from config.builder.config_convertor import ConfigConvertor
 import os
 
+
 def merge_cli_env(cli_args: dict, env_vars: dict) -> dict:
+    result = env_vars.copy()
+
+    for k, v in cli_args.items():
+        if v is not None:
+            result[k] = v
+
+    return result
+
+def xmerge_cli_env(cli_args: dict, env_vars: dict) -> dict:
     """
     Merge two flat dot-path dictionaries and convert to nested dict.
     dict1 overrides dict2.
     """
-    dict1 = cli_args
-    dict2 = env_vars
+    dict_arr =[ env_vars , cli_args ]
 
-    merged = {}
-
-    # dict2 first (lower priority)
-    merged.update(dict2)
-
-    # dict1 overrides
-    merged.update(dict1)
 
     result = {}
+    for x in dict_arr :
+        for path, value in x.items():
+            keys = path.split(".")
+            cur = result
+            if value == None:
+                continue;
 
-    for path, value in merged.items():
-        keys = path.split(".")
-        cur = result
+            for key in keys[:-1]:
+                cur = cur.setdefault(key, {})
 
-        for key in keys[:-1]:
-            cur = cur.setdefault(key, {})
-
-        cur[keys[-1]] = value
+            cur[keys[-1]] = value
 
     return result
 
@@ -44,6 +48,9 @@ def get_yaml_file(cli_args, env_vars, default_yaml):
 def set_if_path_exists(data: dict, path: str, value):
     keys = path.split(".")
     current = data
+
+    if value is None:
+        return False
 
     for key in keys[:-1]:
         if key not in current:

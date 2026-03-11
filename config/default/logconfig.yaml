@@ -1,5 +1,6 @@
 logging:
   level: INFO
+  yaml: config/default/logconfig.yaml
 
   console:
     enabled: true

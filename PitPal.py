@@ -1,7 +1,7 @@
 import argparse
-from config.core.config_manager as CM
+import config.manager.config_manager as CM
 from utils.logging.pitpal_logger import PitPalLogger
-from engine.engine import Engine
+#from engine.engine import Engine
 
 
 
@@ -13,6 +13,7 @@ def argument_list():
 def init_logger(args):
     log_cli = CM.getLogConfigManager().extract_arguments(args)
     log_config = CM.getLogConfigManager().get_config(log_cli)
+    print(log_config)
     PitPalLogger.initialize(log_config)
 
 

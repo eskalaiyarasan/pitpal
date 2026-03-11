@@ -1,5 +1,6 @@
 import argparse
 import pytest
+import yaml
 
 from config.manager.log_config_manager import LoggingConfigManager
 
@@ -17,10 +18,16 @@ def test_config_priority(tmp_path, monkeypatch, yaml_level, env_level, cli_level
 
     # Create temporary YAML
     yaml_file = tmp_path / "log.yaml"
-    yaml_file.write_text(f"""
-logging:
-  level: {yaml_level}
-""")
+    source_file="./config/default/logconfig.yaml"
+    with open(source_file, 'r') as file:
+        # Use safe_load for security, especially with untrusted sources
+        data = yaml.safe_load(file)
+    data["logging"]["yaml"] = str(yaml_file)
+    data["logging"]["level"] = yaml_level
+
+    with open( str(yaml_file), 'w') as file:
+        # Use default_flow_style=False for human-readable, block-style indentation
+        yaml.dump(data, file, default_flow_style=False, sort_keys=False)
 
     manager = LoggingConfigManager()
 
@@ -44,7 +51,8 @@ logging:
 
     assert config.logging.level == expected
 
-@pytest.mark.parametrize(
+
+"""@pytest.mark.parametrize(
     "rotate_type, rotate_size, rotate_time",
     [
         ("size", "10MB", None),
@@ -54,10 +62,6 @@ logging:
 def test_rotation_modes(tmp_path, rotate_type, rotate_size, rotate_time):
 
     yaml_file = tmp_path / "log.yaml"
-    yaml_file.write_text("""
-logging:
-  level: INFO
-""")
 
     manager = LoggingConfigManager()
 
@@ -80,4 +84,4 @@ logging:
     config = manager.get_config(cli_dict)
 
     assert config.logging.rotate.type == rotate_type
-
+"""

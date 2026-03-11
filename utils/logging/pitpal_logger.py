@@ -38,9 +38,16 @@ class PitPalLogger:
         logger.propagate = False
 
         # formatter
+        style=str(log_cfg.format.style)
+        if style == "text":
+            style = "%"
+        elif style == "json":
+            style = "{"
+        else:
+            raise ValueError(f"Invalid log formatter style: {style}")
         formatter = logging.Formatter(
             log_cfg.format.pattern,
-            style=log_cfg.format.style,
+            style=style,
         )
 
         # ----------------------
