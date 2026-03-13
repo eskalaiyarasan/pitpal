@@ -29,15 +29,15 @@ def logging_config(tmp_path):
                 path=str(log_file),
                 rotate="size",
 
-                size_rotation=SizeRotationConfig(
-                    max_bytes=1024 * 100,
-                    backup_count=3
+                sizerotation=SizeRotationConfig(
+                    max_bytes= 100,
+                    backupcount=3
                 ),
 
-                time_rotation=TimeRotationConfig(
+                timerotation=TimeRotationConfig(
                     when="midnight",
                     interval=1,
-                    backup_count=7
+                    backupcount=7
                 )
             ),
 

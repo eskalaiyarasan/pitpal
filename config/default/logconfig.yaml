@@ -10,14 +10,14 @@ logging:
     path: logs/pitpal.log
     rotate: size        # size | time
 
-    size_rotation:
-      max_bytes: 2097152     # 2 MB
-      backup_count: 5
+    sizerotation:
+      max: 2048     # 2 MB
+      backupcount: 5
 
-    time_rotation:
+    timerotation:
       when: midnight         # midnight | H | D
       interval: 1
-      backup_count: 7
+      backupcount: 7
 
   format:
     style: text              # text | json

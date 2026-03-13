@@ -11,7 +11,8 @@ class LoggingConfigManager(Singleton):
     def __init__(self):
         if not hasattr(self, "_initialized"):
             self.prefix=module_name
-            self.args=["--logging-level","--logging-file-path","--logging-yaml"]
+            self.args=["--logging-level","--logging-file-path","--logging-yaml",
+                       "--logging-file-sizerotation-max" , "--logging-file-timerotate-when"]
             self._initialized = True
 
     def register_arguments(self, parser):

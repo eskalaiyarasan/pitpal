@@ -69,16 +69,16 @@ class PitPalLogger:
             if file_cfg.rotate == "size":
                 handler = RotatingFileHandler(
                     file_cfg.path,
-                    maxBytes=file_cfg.size_rotation.max_bytes,
-                    backupCount=file_cfg.size_rotation.backup_count,
+                    maxBytes=int(file_cfg.sizerotation.max) *1024,
+                    backupCount=file_cfg.sizerotation.backupcount,
                 )
 
             elif file_cfg.rotate == "time":
                 handler = TimedRotatingFileHandler(
                     file_cfg.path,
-                    when=file_cfg.time_rotation.when,
-                    interval=file_cfg.time_rotation.interval,
-                    backupCount=file_cfg.time_rotation.backup_count,
+                    when=file_cfg.timerotation.when,
+                    interval=file_cfg.timerotation.interval,
+                    backupCount=file_cfg.timerotation.backupcount,
                 )
 
             else:
