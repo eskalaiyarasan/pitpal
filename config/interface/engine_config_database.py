@@ -44,7 +44,7 @@ class FixedRuleConfig:
 
 
 @dataclass(frozen=True)
-class ruleConfig:
+class RuleConfig:
     var: VarRuleConfig
     fixed: FixedRuleConfig
     yaml: str
