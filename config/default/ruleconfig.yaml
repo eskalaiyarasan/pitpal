@@ -23,5 +23,6 @@ rule:
     level: "beginner" # str – difficulty level (e.g., beginner|intermediate|expert)
     algo: "classic"        # str – algorithm name
     engine: "engine/rules/json/pal.json"        # str – engine identifier
+    nPlayer: 2
 
   yaml: "config/default/engineconfig.yaml"               # str – schema/config version tag

@@ -41,6 +41,7 @@ class FixedRuleConfig:
     level: str
     algo: str 
     engine:str 
+    nplayer:int
 
 
 @dataclass(frozen=True)

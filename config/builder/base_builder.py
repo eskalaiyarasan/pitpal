@@ -72,10 +72,11 @@ def apply_overrides(yaml_data: dict, overrides: dict):
 
 class ConfigBuilder:
 
-    def __init__(self, cli_args, env_vars, default_yaml):
+    def __init__(self, cli_args, env_vars, default_yaml, order=False):
         self.cli = cli_args
         self.env = env_vars
         self.default_yaml = default_yaml
+        self.order=order
 
     def build(self, cc):
 
