@@ -1,10 +1,21 @@
+import tempfile
+from pathlib import Path
 
 import yaml
-from pathlib import Path
+
+
+def write_to_temp(data: dict, key):
+    # Create a temporary file with .yaml extension
+    temp = tempfile.NamedTemporaryFile(delete=False, suffix=".yaml", mode="w")
+    data[key]["yaml"] = temp.name
+    # Write dict as YAML
+    yaml.dump(data, temp, default_flow_style=False)
+
+    temp.close()
+    return temp.name  # return path to temp file
 
 
 class YamlLoader:
-
     @staticmethod
     def load(path: str) -> dict:
         p = Path(path)
@@ -16,4 +27,3 @@ class YamlLoader:
             data = yaml.safe_load(f)
 
         return data or {}
-

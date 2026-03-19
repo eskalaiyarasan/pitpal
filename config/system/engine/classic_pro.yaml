@@ -1,0 +1,60 @@
+name: classic_pro
+display: Classic Pro
+version: cp00.01
+status: OK #work in progress  #
+tier: 1
+options:
+  - easy
+  - medium
+  - hard
+
+doc: docs/text/rules_classic_pro.txt
+
+rule:
+  algo: "classic"
+  capture: "opposite"
+  json: "engine/rules/json/pro.json"
+  nplayer: 2
+  kingzpit: false
+
+easy:
+  level: 1
+  base:
+    nseeds: 5
+    npits: 6
+  fruit:
+    dormant: true
+  time:
+    max: 200
+  clock:
+    enabled: false
+  captureplus: false
+
+medium:
+  level: 2
+  base:
+    nseeds: 11
+    npits: 7
+  fruit:
+    dormant: false
+    count: 5
+  time:
+    max: 90
+  clock:
+    enabled: false
+  captureplus: false
+
+hard:
+  level: 3
+  base:
+    nseeds: 15
+    npits: 7
+  fruit:
+    dormant: false
+    count: 10
+  time:
+    max: 60
+  clock:
+    enabled: true
+    min: 40
+  captureplus: true

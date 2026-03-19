@@ -1,0 +1,60 @@
+name: classic_pal
+display: Classic Pal
+version: "r00.00.1001"
+status: OK
+tier: 1
+options:
+  - easy
+  - medium
+  - hard
+
+doc: docs/text/rules_classic_pal.txt
+
+rule:
+  algo: "classic"
+  capture: "beyond"
+  json: "engine/rules/json/pal.json"
+  nplayer: 2
+  kingzpit: true
+
+easy:
+  level: "beginner"
+  base:
+    nseeds: 6
+    npits: 7
+  fruit:
+    dormant: true
+  time:
+    max: 200
+  clock:
+    enabled: false
+  captureplus: false
+
+medium:
+  level: "intermediate"
+  base:
+    nseeds: 12
+    npits: 7
+  fruit:
+    dormant: false
+    count: 6
+  time:
+    max: 90
+  clock:
+    enabled: false
+  captureplus: false
+
+hard:
+  level: "expert"
+  base:
+    nseeds: 15
+    npits: 7
+  fruit:
+    dormant: false
+    count: 8
+  time:
+    max: 60
+  clock:
+    enabled: true
+    min: 40
+  captureplus: true

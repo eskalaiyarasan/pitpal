@@ -1,28 +1,28 @@
 # pitpal_rule_config.yaml
 
-rule:
-  var:
-    board:
-      nseeds: 5        # int – seeds per pit (example)
-      npits: 6         # int – pits per side (example)
-      nside: 2         # int – number of sides (usually 2)
+engine:
+  board:
+    base:
+      nseeds: 5 # int – seeds per pit (example)
+      npits: 6 # int – pits per side (example)
+      nside: 2 # int – number of sides (usually 2)
     fruit:
-      dormant: true   # bool – whether fruiting is disabled
-      period: 3        # int – number of moves/turns between fruiting
+      dormant: true # bool – whether fruiting is disabled
+      period: 3 # int – number of moves/turns between fruiting
     time:
-      max: 180          # int – seconds per move
-      enabled: true    # bool – enable per-move time control
+      max: 180 # int – seconds per move
+      enabled: true # bool – enable per-move time control
     clock:
-      enabled: false   # bool – enable game clock (overall)
-      min: 10          # int – total minutes per side (if enabled)
-    kingzpit: false    # bool – special rule toggle
-    capture: "beyond"  # str – capture rule variant, e.g., "standard", "avalanche", etc.
-    captureplus: false    # bool – enable extra capture behaviors
+      enabled: false # bool – enable game clock (overall)
+      min: 10 # int – total minutes per side (if enabled)
+    level: "beginner"
+    captureplus: false # bool – enable extra capture behaviors
 
-  fixed:
-    level: "beginner" # str – difficulty level (e.g., beginner|intermediate|expert)
-    algo: "classic"        # str – algorithm name
-    engine: "engine/rules/json/pal.json"        # str – engine identifier
+  rule:
+    algo: "classic" # str – algorithm name
+    json: "engine/rules/json/pal.json" # str – engine identifier
     nPlayer: 2
+    capture: "beyond"
+    kingzpit: false
 
-  yaml: "config/default/engineconfig.yaml"               # str – schema/config version tag
+  yaml: "config/default/ruleconfig.yaml" # str – schema/config version tag

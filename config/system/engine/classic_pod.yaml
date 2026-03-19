@@ -1,0 +1,67 @@
+
+display: Classic Pod
+name: classic_pod
+version: r00.00.1001
+status: OK  #work in progress  # 
+tier: 1
+options:
+  - easy 
+  - medium 
+  - hard
+
+doc: docs/text/rules_classic_pod.txt
+
+rule:
+  algo: "classic"
+  capture: "previous"
+  json: "engine/rules/json/pod.json"
+  nplayer: 2
+  kingzpit: true
+
+easy:
+  level: 1
+  base:
+    nseeds: 6
+    npits: 7
+  fruit:
+    dormant: true
+  time:
+    max: 200
+  clock:
+    enabled: false
+  captureplus: false
+
+medium:
+  level: 2
+  base:
+    nseeds: 10
+    npits: 8
+  fruit:
+    dormant: false
+    count: 5
+  time:
+    max: 90
+  clock:
+    enabled: false
+  captureplus: false
+
+
+hard:
+  level: 3
+  base:
+    nseeds: 12
+    npits: 8
+  fruit:
+    dormant: false
+    count: 6
+  time:
+    max: 60
+  clock:
+    enabled: true
+    min: 40
+  captureplus: true
+
+
+
+
+

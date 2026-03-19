@@ -10,6 +10,7 @@ from config.interface.logging_config_database import (
     SizeRotationConfig,
     TimeRotationConfig,
 )
+from utils.logging.pitpal_logger import PitPalLogger
 
 
 @pytest.fixture(autouse=True)
@@ -31,7 +32,7 @@ def logging_config(tmp_path):
                 ),
             ),
             format=FormatConfig(
-                style="%",
+                style="text",
                 pattern="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
             ),
             remote=RemoteLoggingConfig(
@@ -39,5 +40,6 @@ def logging_config(tmp_path):
             ),
         )
     )
+    PitPalLogger.initialize(config)
 
     return config
