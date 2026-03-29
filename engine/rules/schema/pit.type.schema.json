@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "engine/rules/schema/pit.type.schema.json",
+  "title": "Game Parameter",
+
+  "$defs": {
+    "pitType": {
+      "type": "object",
+      "required": ["Type"],
+
+      "properties": {
+        "Type": {
+          "type": "string",
+          "enum": ["normal", "normalPlus"],
+          "default": "normal"
+        },
+
+        "Value": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

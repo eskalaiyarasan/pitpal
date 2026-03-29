@@ -6,21 +6,24 @@
   "$defs": {
     "Capture": {
       "type": "object",
-      "required": [ "Type", "SubType","Param"],
+      "required": ["Type", "SubType", "Param"],
       "properties": {
         "Type": {
-	   "type":"string",
-	   "const": "enum"
+          "type": "string",
+          "const": "enum"
         },
 
         "SubType": {
           "type": "string",
           "enum": ["beyond", "opposite", "adjacent"]
-	  },
-        
-	"Param":{ 		
-	   "$ref": "engine/rules/schema/parameter.schema.json#/$defs/Parameter"
-      	}
+        },
+        "Plus": {
+          "type": "boolean",
+          "default": false
+        },
+        "Param": {
+          "$ref": "engine/rules/schema/parameter.schema.json#/$defs/Parameter"
+        }
       },
       "additionalProperties": false
     }

@@ -6,7 +6,7 @@
 
   "properties": {
     "vRule": { "type": "string" },
-    "vSchema": { "type" : "string", "const" : "s00.00.002" },
+    "vSchema": { "type": "string", "const": "s00.00.003" },
 
     "board": {
       "$ref": "engine/rules/schema/board.schema.json#/$defs/Board"
@@ -25,20 +25,10 @@
     },
     "direction": {
       "$ref": "engine/rules/schema/boolean.schema.json#/$defs/Bool"
-    },
-    "mod": {
-      "$ref": "engine/rules/schema/integer.schema.json#/$defs/Integer"
     }
   },
 
-  "required": [
-    "vSchema",
-    "vRule",
-    "board",
-    "algorithm",
-    "capture",
-    "nPlayers"
-  ],
+  "required": ["vSchema", "vRule", "board", "algorithm", "capture", "nPlayers"],
 
   "additionalProperties": false
 }

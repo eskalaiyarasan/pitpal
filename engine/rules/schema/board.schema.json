@@ -7,7 +7,9 @@
     "Board": {
       "type": "object",
       "properties": {
-
+        "pitType": {
+          "$ref": "engine/rules/schema/pit.type.schema.json#/$defs/pitType"
+        },
         "pitsPerSide": {
           "allOf": [
             { "$ref": "engine/rules/schema/integer.schema.json#/$defs/Integer" }
@@ -33,7 +35,6 @@
             "minimum": 0
           }
         }
-
       },
 
       "required": ["pitsPerSide", "nSide", "nSeeds"],
