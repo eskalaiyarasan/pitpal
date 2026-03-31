@@ -4,56 +4,41 @@ module_name = "engine"
 
 
 @dataclass(frozen=True)
-class TimePerMove:
-    max: int
-    enabled: bool
+class CloudEventConfig:
+    enable: bool
+    url: int
+    auth: str
 
 
 @dataclass(frozen=True)
-class ClockRule:
-    enabled: bool
-    min: int
+class RemoteEventConfig:
+    enable: int
+    ip: str
+    port: int
+    auth: str
 
 
 @dataclass(frozen=True)
-class Fruiting:
-    dormant: bool
-    count: int
+class LocalEventConfig:
+    enable: bool
+    path: str
 
 
 @dataclass(frozen=True)
-class PitsRuleConfig:
-    nseeds: int
-    npits: int
-    nside: int
+class EventParamConfig:
+    single: bool
+    local: LocalEventConfig
+    remote: RemoteEventConfig
+    cloud: CloudEventConfig
 
 
 @dataclass(frozen=True)
-class BoardRuleConfig:
+class EventConfig:
     level: str
-    base: PitsRuleConfig
-    fruit: Fruiting
-    time: TimePerMove
-    clock: ClockRule
-    captureplus: bool
-
-
-@dataclass(frozen=True)
-class EngineRuleConfig:
-    algo: str
-    nplayer: int
-    kingzpit: bool
-    capture: str
-    json: str
-
-
-@dataclass(frozen=True)
-class RuleConfig:
-    board: BoardRuleConfig
-    rule: EngineRuleConfig
+    param: EngineParamConfig
     yaml: str
 
 
 @dataclass(frozen=True)
-class PitpalRuleConfig:
-    engine: RuleConfig
+class PitpalEventConfig:
+    engine: EventConfig
