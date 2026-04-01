@@ -1,69 +1,115 @@
-import os
 import pickle
 import socket
-import tempfile
-import uuid
-
-from utils.events.event_base import BaseEventClass
-
-from utils.logging.pitpal_logger import PitPalLogger
+import ssl
+import threading
 
 
-import os
-import pickle
-import socket
-import ssl  # Required for TLS
-from utils.events.event_base import BaseEventClass
-from utils.logging.pitpal_logger import PitPalLogger
-
-class RemoteEventClass(BaseEventClass):
-    def __init__(self, host="127.0.0.1", port=8443, cert_path=None, auth_token=None):
-        """
-        Modified to use TCP + TLS.
-        :param host: Server IP (default localhost)
-        :param port: Server Port
-        :param cert_path: Path to the CA certificate to verify the server
-        :param auth_token: Optional string for application-level handshake
-        """
-        self.host = host
-        self.port = port
-        self.cert_path = cert_path
-        self.auth_token = auth_token
+class BaseRemoteEvent(BaseEventClass):
+    def __init__(self, start_offset, step):
+        self._subscribers = {}
+        self._counter = start_offset
+        self._step = step
+        self._lock = threading.Lock()
         self.logger = PitPalLogger.get_logger()
 
-        # Initialize SSL Context
-        self.context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-        if self.cert_path and os.path.exists(self.cert_path):
-            self.context.load_verify_locations(self.cert_path)
-        else:
-            # For local testing with self-signed certs, you might disable verification
-            # (Not recommended for production)
-            self.context.check_hostname = False
-            self.context.verify_mode = ssl.CERT_NONE
+    def inc(self):
+        with self._lock:
+            val = self._counter
+            if val <= 100000:
+                self._counter += self._step
+                return hex(val)
+            return None
 
-    def __str__(self):
-        return f"tls://{self.host}:{self.port}"
+    def register(self, event_type, callback):
+        self._subscribers.setdefault(event_type, []).append(callback)
+
+    def _trigger_local(self, event_num, event_type, *args, **kwargs):
+        if event_type in self._subscribers:
+            for callback in self._subscribers[event_type]:
+                callback(event_num, *args, **kwargs)
+
+
+class RemoteEventServer(BaseRemoteEvent):
+    def __init__(self, max_clients=4, port=8443, cert="server.crt", key="server.key"):
+        # Server always starts at 1, step is max_clients + 1
+        super().__init__(start_offset=1, step=max_clients + 1)
+        self.port = port
+        self.max_clients = max_clients
+        self.current_client_count = 0
+
+        self.context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        self.context.load_cert_chain(certfile=cert, keyfile=key)
+
+    def start(self):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.bind(("0.0.0.0", self.port))
+            sock.listen(self.max_clients)
+            while True:
+                client_sock, addr = sock.accept()
+                conn = self.context.wrap_socket(client_sock, server_side=True)
+                self.current_client_count += 1
+                # Handshake: Tell client their ID (offset) and the global Step
+                handshake = {"offset": self.current_client_count + 1, "step": self.step}
+                conn.sendall(pickle.dumps(handshake))
+
+                threading.Thread(
+                    target=self._handle_client, args=(conn,), daemon=True
+                ).start()
+
+    def _handle_client(self, conn):
+        with conn:
+            while True:
+                data = conn.recv(4096)
+                if not data:
+                    break
+                packet = pickle.loads(data)
+                # Server receives event from client, triggers local subscribers
+                self._trigger_local(
+                    packet["num"], packet["type"], *packet["args"], **packet["kwargs"]
+                )
 
     def notify(self, event_type, *args, **kwargs):
-        packet = {
-            "type": event_type,
-            "args": args,
-            "kwargs": kwargs,
-            "auth": self.auth_token  # Including auth inside the encrypted payload
-        }
-        payload = pickle.dumps(packet)
+        """Server notifies all clients + local"""
+        event_num = self.inc()
+        # 1. Trigger local
+        self._trigger_local(event_num, event_type, *args, **kwargs)
+        # 2. Logic to loop through active 'conn' objects and sendall(packet) would go here
 
-        try:
-            # 1. Create standard TCP socket
-            with socket.create_connection((self.host, self.port)) as sock:
-                # 2. Wrap the socket with TLS
-                with self.context.wrap_socket(sock, server_hostname=self.host) as ssock:
-                    self.logger.debug(f"Event: LocalEvent(TLS): notify {event_type}")
-                    ssock.sendall(payload)
 
-        except (ConnectionRefusedError, ssl.SSLError) as e:
-            self.logger.error(f"Event: LocalEvent(TLS) notify failed: {e}")
+class RemoteEventClient(BaseRemoteEvent):
+    def __init__(self, host="127.0.0.1", port=8443, cert_path="server.crt"):
+        self.host = host
+        self.port = port
+        self.context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+        self.context.load_verify_locations(cert_path)
+        self.conn = None
 
-class LocalEventClass(RemoteEventClass):
-    def __init__(self,  port=8443, cert_path=None, auth_token=None):
-        super().__init("127.0.0.1",,port, cert_path, auth_token)
+    def connect(self):
+        sock = socket.create_connection((self.host, self.port))
+        self.conn = self.context.wrap_socket(sock, server_hostname=self.host)
+
+        # Handshake: Get offset and step from server
+        setup = pickle.loads(self.conn.recv(1024))
+        super().__init__(start_offset=setup["offset"], step=setup["step"])
+
+        threading.Thread(target=self._listen_to_server, daemon=True).start()
+
+    def _listen_to_server(self):
+        with self.conn:
+            while True:
+                data = self.conn.recv(4096)
+                if not data:
+                    break
+                packet = pickle.loads(data)
+                self._trigger_local(
+                    packet["num"], packet["type"], *packet["args"], **packet["kwargs"]
+                )
+
+    def notify(self, event_type, *args, **kwargs):
+        event_num = self.inc()
+        packet = {"num": event_num, "type": event_type, "args": args, "kwargs": kwargs}
+        # 1. Trigger local
+        self._trigger_local(event_num, event_type, *args, **kwargs)
+        # 2. Send to server
+        if self.conn:
+            self.conn.sendall(pickle.dumps(packet))
