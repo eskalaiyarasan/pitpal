@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+# Copyright (C) 2026 Pitpal
+#
+# This file is part of PitPal.
+#
+#
+# PitPal is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+#    Author    :  Kalaiyarasan Es
+#    File name :  pitpal/engine/src/_board.py
+#    Date      :  02/03/2026
+#######################################################################
+
+import engine.src.pit.basicpit as basic
+import engine.src.pit.kingzpit as king
+import engine.src.pit.modpit as modd
+import utils.jsonUtils.pitpal_json_schema_utils as Jsu
+
+
+def create_pit(index, seeds, typee, prev, back, special, notifyy):
+    seeds = 0 if special else seeds
+
+    if typee["Type"] == "normalPlus":
+        value = typee["Value"]
+        if special:
+            return modd.modpit(index, seeds, king.kingzpit, value, notifyy, prev, back)
+        else:
+            return modd.modpit(index, seeds, basic.basicpit, value, notifyy, prev, back)
+    elif special:
+        return king.kingzpit(index, seeds, prev, back)
+    else:
+        return basic.basicpit(index, seeds, prev, back)
+
+
+class Board:
+    def __init__(self, pits_per_side, n_side, n_seeds, pit_type, special_pits=None):
+        self.pits_per_side = pits_per_side
+        self.n_side = n_side
+        self.n_seeds = n_seeds
+        self.pit_type = pit_type
+        self.special_pits = special_pits if special_pits is not None else []
+
+        # Calculate Total Seeds based on your logic:
+        # Total = (Total potential pits) - (special pits that start empty)
+        # We multiply by nSeeds because special pits start with 0 instead of nSeeds.
+        self.total_seeds = (n_side * pits_per_side * n_seeds) - (
+            len(self.special_pits) * n_seeds
+        )
+
+        # Build the nested structure: sides -> pits
+        self.sides = self._build_board()
+
+    def _mod_notify(self, index, modv):
+        pass
+
+    def _build_board(self):
+        board_structure = []
+        pit_counter = 0
+
+        for side_index in range(self.n_side):
+            current_side = []
+            nextt = None
+            for i in range(self.pits_per_side):
+                # If the current pit index is in special_pits, it starts with 0 seeds
+                special = True if pit_counter in self.special_pits else False
+                k = side_index * self.n_side + i
+                nextt = create_pit(
+                    k,
+                    self.n_seeds,
+                    self.pit_type,
+                    None,
+                    nextt,
+                    special,
+                    self._mod_notify,
+                )
+                current_side.append(nextt)
+                pit_counter += 1
+            board_structure.append(current_side)
+
+        return board_structure
+
+    @classmethod
+    def from_json(cls, data):
+        """Builds the Board object from the JSON schema dictionary."""
+        return cls(
+            pits_per_side=data["pitsPerSide"],
+            n_side=data["nSide"],
+            n_seeds=data["nSeeds"],
+            pit_type=data["pitType"],
+            special_pits=data.get("specialPits", []),
+        )

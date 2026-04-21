@@ -1,65 +1,52 @@
-from dataclasses import dataclass, fields
-from typing import Optional
+from dataclasses import dataclass
+from typing import Literal, Union
 
 
 @dataclass(frozen=True)
 class CloudEventConfig:
-    enable: bool
-    url: str  # Fixed: changed int to str for URL
+    url: str
     auth: str
+    type: Literal["cloud"] = "cloud"
 
 
 @dataclass(frozen=True)
 class RemoteEventConfig:
-    enable: bool  # Fixed: changed int to bool
     ip: str
     port: int
     auth: str
+    type: Literal["remote"] = "remote"
 
 
 @dataclass(frozen=True)
 class LocalEventConfig:
-    enable: bool
     path: str
+    auth: str
+    type: Literal["local"] = "local"
 
 
+# This represents the 'single' case without needing a full class
 @dataclass(frozen=True)
-class EventParamConfig:
-    # Use Optional and default to None
-    single: Optional[bool] = None
-    local: Optional[LocalEventConfig] = None
-    remote: Optional[RemoteEventConfig] = None
-    cloud: Optional[CloudEventConfig] = None
+class SingleEventConfig:
+    enabled: bool = True
+    type: Literal["single"] = "single"
 
-    def __post_init__(self):
-        # Count how many fields are NOT None
-        active_configs = [
-            self.single is not None,
-            self.local is not None,
-            self.remote is not None,
-            self.cloud is not None,
-        ]
 
-        count = sum(active_configs)
-
-        if count == 0:
-            raise ValueError("At least one configuration must be provided.")
-        if count > 1:
-            raise ValueError(
-                "Only one of [single, local, remote, cloud] can be set at a time."
-            )
+# Define the Union: The 'param' can ONLY be one of these
+EventParam = Union[
+    SingleEventConfig, LocalEventConfig, RemoteEventConfig, CloudEventConfig
+]
 
 
 @dataclass(frozen=True)
 class EventConfig:
     level: str
-    param: EventParamConfig  # Fixed name to match EventParamConfig
+    param: EventParam  # This enforces that only ONE config type is passed
     yaml: str
 
 
 @dataclass(frozen=True)
 class PitpalEventConfig:
-    engine: EventConfig
+    event: EventConfig
 
 
 module_name = "event"
