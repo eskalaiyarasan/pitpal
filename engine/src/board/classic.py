@@ -18,7 +18,7 @@ import engine.src.pit.basicpit as basic
 import engine.src.pit.kingzpit as king
 import engine.src.pit.modpit as modd
 import utils.jsonUtils.pitpal_json_schema_utils as Jsu
-
+import engine.src.board.abstractboard as abx
 
 def create_pit(index, seeds, typee, prev, back, special, notifyy):
     seeds = 0 if special else seeds
@@ -35,7 +35,7 @@ def create_pit(index, seeds, typee, prev, back, special, notifyy):
         return basic.basicpit(index, seeds, prev, back)
 
 
-class Board:
+class Board(abx.baseboard):
     def __init__(self, pits_per_side, n_side, n_seeds, pit_type, special_pits=None):
         self.pits_per_side = pits_per_side
         self.n_side = n_side
