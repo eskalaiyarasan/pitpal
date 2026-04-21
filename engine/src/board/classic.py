@@ -59,10 +59,11 @@ class Board:
     def _build_board(self):
         board_structure = []
         pit_counter = 0
+        first = None
+        nextt = None
 
         for side_index in range(self.n_side):
             current_side = []
-            nextt = None
             for i in range(self.pits_per_side):
                 # If the current pit index is in special_pits, it starts with 0 seeds
                 special = True if pit_counter in self.special_pits else False
@@ -78,8 +79,11 @@ class Board:
                 )
                 current_side.append(nextt)
                 pit_counter += 1
+                if first == None:
+                    first = nextt
             board_structure.append(current_side)
-
+        if pit_counter > 0:
+            first.link = nextt
         return board_structure
 
     @classmethod
