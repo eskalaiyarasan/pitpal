@@ -13,8 +13,12 @@ class basepit:
             "capture": False,
         }
 
-    def __getitem__(self, ppty):
+    def __getattr__(self, ppty):
         return self.storage.get(ppty, "Key not found!")
+
+    def __setattr__(self, ppty, value):
+        if ppty in self.storage:
+            self.storage[ppty] = value
 
     @abstractmethod
     def get(self):

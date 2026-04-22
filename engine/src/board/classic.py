@@ -14,11 +14,15 @@
 #    Date      :  02/03/2026
 #######################################################################
 
+import engine.src.board.abstractboard as abx
+import engine.src.common as common
 import engine.src.pit.basicpit as basic
 import engine.src.pit.kingzpit as king
 import engine.src.pit.modpit as modd
+import utils.events.event as event
 import utils.jsonUtils.pitpal_json_schema_utils as Jsu
-import engine.src.board.abstractboard as abx
+import utils.logging.pitpal_logger as pl
+
 
 def create_pit(index, seeds, typee, prev, back, special, notifyy):
     seeds = 0 if special else seeds
@@ -42,6 +46,7 @@ class Board(abx.baseboard):
         self.n_seeds = n_seeds
         self.pit_type = pit_type
         self.special_pits = special_pits if special_pits is not None else []
+        self.logger = pl.PitPalLogger.get_logger()
 
         # Calculate Total Seeds based on your logic:
         # Total = (Total potential pits) - (special pits that start empty)
@@ -51,10 +56,20 @@ class Board(abx.baseboard):
         )
 
         # Build the nested structure: sides -> pits
-        self.sides = self._build_board()
+        try:
+            self.event = event.get_event()
+            self.sides = self._build_board()
+            self.state = abx.State.READY
+        except Exception as e:
+            self.logger.fatal(f"Failed to create board: {e}")
+            self.state = abx.State.ERR
 
     def _mod_notify(self, index, modv):
-        pass
+        self.logger.info(f"notify/board: mod notify {index} : {modv}")
+        try:
+            self.event.notify("mod", index, modv)
+        except Exception as e:
+            self.logger.error(f"notify/board: mod notify {index} : {modv}")
 
     def _build_board(self):
         board_structure = []
@@ -89,6 +104,12 @@ class Board(abx.baseboard):
     @classmethod
     def from_json(cls, data):
         """Builds the Board object from the JSON schema dictionary."""
+        jsu = Jsu.JSU(
+            schema_file="engine/rules/schema/board.schema.json", json_data=data
+        )
+        if not jsu.validate():
+            raise common.IllegalConfiguration(f"bad board config: {data}")
+            return None
         return cls(
             pits_per_side=data["pitsPerSide"],
             n_side=data["nSide"],
@@ -96,3 +117,5 @@ class Board(abx.baseboard):
             pit_type=data["pitType"],
             special_pits=data.get("specialPits", []),
         )
+
+    def move(self, index):

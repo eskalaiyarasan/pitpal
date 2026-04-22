@@ -11,10 +11,11 @@ class SingleEventClass(BaseEventClass):
 
     def inc(self):
         with self._lock:
-            if self._counter < 100000:
+            if self._counter < 1000000:
                 self._counter += 1
-                return hex(self._counter)
-            return None
+            else:
+                self._counter = 1
+            return hex(self._counter)
 
     def register(self, event_type, callback):
         self._subscribers.setdefault(event_type, []).append(callback)

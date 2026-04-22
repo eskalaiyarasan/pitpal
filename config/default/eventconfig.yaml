@@ -1,8 +1,5 @@
 engine:
-  level: "remote"
-  yaml: "v2.0"
+  level: "single"
+  yaml: "config/default/eventconfig.yaml"
   param:
-    type: "remote"
-    ip: "192.168.1.50"
-    port: 8443
-    auth: "secure_token_123"
+    type: "single"

@@ -27,7 +27,6 @@ class LocalEventConfig:
 # This represents the 'single' case without needing a full class
 @dataclass(frozen=True)
 class SingleEventConfig:
-    enabled: bool = True
     type: Literal["single"] = "single"
 
 
