@@ -13,7 +13,7 @@
 #    File name :  pitpal/engine/src/_board.py
 #    Date      :  02/03/2026
 #######################################################################
-
+import copy
 import engine.src.board.abstractboard as abx
 import engine.src.common as common
 import engine.src.pit.basicpit as basic
@@ -47,7 +47,10 @@ class Board(abx.baseboard):
         self.pit_type = pit_type
         self.special_pits = special_pits if special_pits is not None else []
         self.logger = pl.PitPalLogger.get_logger()
-
+        self.ippo = self.n_side
+        self.anumathi = False
+        self.ippo_guzhi = None
+        self.thodair = False
         # Calculate Total Seeds based on your logic:
         # Total = (Total potential pits) - (special pits that start empty)
         # We multiply by nSeeds because special pits start with 0 instead of nSeeds.
@@ -117,5 +120,59 @@ class Board(abx.baseboard):
             pit_type=data["pitType"],
             special_pits=data.get("specialPits", []),
         )
+    def options(self,side):
+        if (side < 0) or (side >= self.n_side) or (self.ippo == side):
+            return None
+        ret=[]
+        for guzhi in self.sides[side]:
+            try:
+                kaai = int(guzhi) 
+                if kaai > 0:
+                    ret.append(guzhi.index)
+            except Exception as e:
+                continue
+        if len(ret) == 0:
+            self.state = abx.State.GAMEOVER
+            return None
+        self.ippo = side
+        self.anumathi = True
+        self.ippo_guzhi = None
+        return ret
+    def relay(self):
+        if not self.thodair:
+            return [False , None]
+        self.ippo_guzhi  = next(self.ippo_guzhi)
+        return self._go()
 
+    def _check_side(self,index):
+        #check index is belong to side.
+        for guzhi in self.sides[self.ippo]:
+            if index == guzhi.index:
+                self.ippo_guzhi = guzhi
+                return True
+        if not check:
+            return False
+            
     def move(self, index):
+        if not ( self.anumathi and super().move(index) ):
+            return [False, None]
+        if not self._check_side(index):
+            return [False, None]
+        return self._go()
+
+    def _go(self):
+        kai = copy.copy(self.ippo_guzhi)
+        while not self.ippo_guzhi.isCapture():
+            self.ippo_guzhi  = next(self.ippo_guzhi)
+            self.ippo_guzhi + a
+        ret = self.ippo_guzhi.get()
+        if (ret > 0):
+            self.thodair = True
+        else:
+            self.thodair = False
+        return [True, ret]
+            
+        
+        
+        
+        
