@@ -1,0 +1,12 @@
+Classic   :=  capture = beyond and move horizontal
+
+one := normal board
+plus := kings board
+square := normal board + relay
+power :=  kings board + relay
+
+pod := no fruit bearing,  no capture plus
+pro :=  fruit bearing,  capture plus
+
+# game := Board + mode + algo + level
+
