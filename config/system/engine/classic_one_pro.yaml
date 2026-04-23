@@ -16,50 +16,40 @@ doc: docs/text/rules_classic_one_pro.txt
 
 rule:
   algo: "classic"
-  capture: "beyond"
   json: "engine/rules/json/pal.json"
-  nplayer: 2
-  kingzpit: true
+  tier: "pro"
+  mode: "one"
 
 easy:
-  level: "beginner"
   base:
     nseeds: 4
     npits: 5
   fruit:
-    dormant: false
     count: 3
   time:
     max: 200
   clock:
     enabled: false
-  captureplus: true
 
 medium:
-  level: "intermediate"
   base:
     nseeds: 6
     npits: 7
   fruit:
-    dormant: false
     count: 4
   time:
     max: 90
   clock:
     enabled: false
-  captureplus: false
 
 hard:
-  level: "expert"
   base:
     nseeds: 12
     npits: 11
   fruit:
-    dormant: false
     count: 6
   time:
     max: 60
   clock:
     enabled: true
     min: 40
-  captureplus: true

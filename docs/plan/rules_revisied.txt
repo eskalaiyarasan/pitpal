@@ -1,12 +1,55 @@
+# game := Board + mode + tier + level
+
+Board:
 Classic   :=  capture = beyond and move horizontal
 
+mode:
 one := normal board
 plus := kings board
 square := normal board + relay
 power :=  kings board + relay
 
+tier:
 pod := no fruit bearing,  no capture plus
 pro :=  fruit bearing,  capture plus
 
-# game := Board + mode + algo + level
+level:
+easy, medium, hard.
 
+==============================================================================
+Classic:
+     capture: "beyond"
+     nplayer: 2
+
+one:
+      kingzpit: false
+      relay: false
+
+pod:
+    captureplus: false
+    fruit:
+        dormant: true
+
+pro:
+    captureplus: true
+    fruit:
+        dormant: false
+
+plus:
+  kingzpit: true
+  relay: false
+
+power:
+  kingzpit: true
+  relay: true
+
+square:
+  kingzpit: false
+  relay: true
+
+easy:
+  level: "beginner"
+medium:
+      level: "intermediate"
+hard:
+  level: "expert"

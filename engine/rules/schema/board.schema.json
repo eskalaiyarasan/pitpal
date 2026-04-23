@@ -28,12 +28,10 @@
           ]
         },
 
-        "specialPits": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "minimum": 0
-          }
+        "kingzpits": {
+          "allOf": [
+            { "$ref": "engine/rules/schema/kingzpits.schema.json#/$defs/kingz" }
+          ]
         }
       },
 

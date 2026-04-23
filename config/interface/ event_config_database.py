@@ -21,6 +21,9 @@ class RemoteEventConfig:
 class LocalEventConfig:
     path: str
     auth: str
+    proto: str
+    mode: str
+    maxie: int
     type: Literal["local"] = "local"
 
 

@@ -1,0 +1,30 @@
+{
+  "vRule": "r00.00.1001",
+  "vSchema": "s00.00.002",
+  "board": {
+    "kingzpits": {
+      "Type": "array:integer",
+      "Value": [],
+      "Param": {
+        "Options": null,
+        "Default": "",
+        "Value": "",
+        "Enabled": false,
+        "Config": "fixed",
+        "Min": "",
+        "Max": ""
+      }
+    }
+  },
+  "relay": {
+    "Param": {
+      "Options": null,
+      "Default": "0",
+      "Value": "0",
+      "Enabled": true,
+      "Config": "fixed",
+      "Min": "0",
+      "Max": "1"
+    }
+  }
+}

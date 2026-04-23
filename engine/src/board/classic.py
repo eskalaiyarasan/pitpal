@@ -42,9 +42,9 @@ def create_pit(index, seeds, typee, prev, back, special, notifyy):
 
 class Board(abx.baseboard):
     def __init__(self, pits_per_side, n_side, n_seeds, pit_type, special_pits=None):
-        self.pits_per_side = pits_per_side
-        self.n_side = n_side
-        self.n_seeds = n_seeds
+        self.pits_per_side = common.check_enabled_ret_value(pits_per_side)
+        self.n_side = common.check_enabled_ret_value(n_side)
+        self.n_seeds = common.check_enabled_ret_value(n_seeds)
         self.pit_type = pit_type
         self.special_pits = special_pits if special_pits is not None else []
         self.logger = pl.PitPalLogger.get_logger()

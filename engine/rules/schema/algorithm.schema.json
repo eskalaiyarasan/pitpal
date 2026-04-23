@@ -6,20 +6,20 @@
   "$defs": {
     "Algorithm": {
       "type": "object",
-      "required": [ "Type", "SubType","Param"],
+      "required": ["Type", "SubType", "Param"],
       "properties": {
         "Type": {
-	   "type":"string",
-	   "const": "enum"
+          "type": "string",
+          "const": "enum"
         },
 
         "SubType": {
           "type": "string",
-          "enum": ["classic", "silver", "snake", "mount"]
-	  },
-	"Param":{ 		
-	   "$ref": "engine/rules/schema/parameter.schema.json#/$defs/Parameter"
-      	}
+          "enum": ["classic", "silver", "spiral", "modern"]
+        },
+        "Param": {
+          "$ref": "engine/rules/schema/parameter.schema.json#/$defs/Parameter"
+        }
       },
       "additionalProperties": false
     }

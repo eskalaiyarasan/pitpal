@@ -16,44 +16,37 @@ doc: docs/text/rules_classic_power_pro.txt
 
 rule:
   algo: "classic"
-  capture: "beyond"
   json: "engine/rules/json/pal.json"
-  nplayer: 2
-  kingzpit: true
-  relay: true
+  mode: "power"
+  tier: "pro"
 
 easy:
-  level: "beginner"
   base:
     nseeds: 4
     npits: 5
   fruit:
-    dormant: false
     count: 3
   time:
     max: 200
   clock:
     enabled: false
-  captureplus: true
+  specialPits: [2, 7]
 
 medium:
-  level: "intermediate"
   base:
     nseeds: 6
     npits: 7
   fruit:
-    dormant: false
     count: 4
   time:
     max: 90
   clock:
     enabled: false
-  captureplus: false
+  specialPits: [3, 10]
 
 hard:
-  level: "expert"
   base:
-    nseeds: 12
+    nseeds: 10
     npits: 11
   fruit:
     dormant: false
@@ -63,4 +56,4 @@ hard:
   clock:
     enabled: true
     min: 40
-  captureplus: true
+  specialPits: [5, 16]

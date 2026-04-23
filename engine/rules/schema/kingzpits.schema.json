@@ -1,25 +1,24 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "engine/rules/schema/pit.type.schema.json",
-  "title": "Game Parameter",
+  "$id": "engine/rules/schema/kingzpit.schema.json",
+  "title": "Algorithm Schema",
 
   "$defs": {
-    "pitType": {
+    "kingz": {
       "type": "object",
-      "required": ["Type"],
-
+      "required": ["Type", "SubType", "Param"],
       "properties": {
         "Type": {
           "type": "string",
-          "const": "enum"
+          "const": "array:integer"
         },
-        "SubType": {
-          "type": "string",
-          "enum": ["normal", "normalPlus"],
-          "default": "normal"
-        },
+
         "Value": {
-          "type": "integer"
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
         },
         "Param": {
           "$ref": "engine/rules/schema/parameter.schema.json#/$defs/Parameter"
