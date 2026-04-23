@@ -1,6 +1,10 @@
-name: classic_pal
-display: Classic Pal
-version: "r00.00.1001"
+#Classic :   capture will be beyond and move horizontal classic move
+#power := kings board, relay
+#pro :  enable fruit bearing and capture plus
+
+name: classic_power_pro
+display: Classic Power Pro
+version: "cwo-0.001"
 status: OK
 tier: 1
 options:
@@ -8,7 +12,7 @@ options:
   - medium
   - hard
 
-doc: docs/text/rules_classic_pal.txt
+doc: docs/text/rules_classic_power_pro.txt
 
 rule:
   algo: "classic"
@@ -16,28 +20,30 @@ rule:
   json: "engine/rules/json/pal.json"
   nplayer: 2
   kingzpit: true
+  relay: true
 
 easy:
   level: "beginner"
   base:
-    nseeds: 6
-    npits: 7
+    nseeds: 4
+    npits: 5
   fruit:
-    dormant: true
+    dormant: false
+    count: 3
   time:
     max: 200
   clock:
     enabled: false
-  captureplus: false
+  captureplus: true
 
 medium:
   level: "intermediate"
   base:
-    nseeds: 12
+    nseeds: 6
     npits: 7
   fruit:
     dormant: false
-    count: 6
+    count: 4
   time:
     max: 90
   clock:
@@ -47,11 +53,11 @@ medium:
 hard:
   level: "expert"
   base:
-    nseeds: 15
-    npits: 7
+    nseeds: 12
+    npits: 11
   fruit:
     dormant: false
-    count: 8
+    count: 6
   time:
     max: 60
   clock:

@@ -1,3 +1,5 @@
+# boards are not register to any events.
+# however boards can emit events
 from abc import ABC, abstractmethod
 from enum import Enum
 
@@ -22,7 +24,7 @@ class baseboard:
     def move(self, index):
         if self.state != State.RUN:
             return False
-        return True
+        return [True, 0]
 
     def isGameOver(self):
         if self.state == State.GAMEOVER:

@@ -1,0 +1,66 @@
+#Classic :   capture will be beyond and move horizontal classic move
+#plus := kings board, no relay
+#pro :  enable fruit bearing and capture plus
+
+name: classic_plus_pro
+display: Classic plus Pro
+version: "cpo-0.001"
+status: OK
+tier: 1
+options:
+  - easy
+  - medium
+  - hard
+
+doc: docs/text/rules_classic_plus_pro.txt
+
+rule:
+  algo: "classic"
+  capture: "beyond"
+  json: "engine/rules/json/pal.json"
+  nplayer: 2
+  kingzpit: true
+  relay: false
+
+easy:
+  level: "beginner"
+  base:
+    nseeds: 4
+    npits: 5
+  fruit:
+    dormant: false
+    count: 3
+  time:
+    max: 200
+  clock:
+    enabled: false
+  captureplus: true
+
+medium:
+  level: "intermediate"
+  base:
+    nseeds: 6
+    npits: 7
+  fruit:
+    dormant: false
+    count: 4
+  time:
+    max: 90
+  clock:
+    enabled: false
+  captureplus: false
+
+hard:
+  level: "expert"
+  base:
+    nseeds: 12
+    npits: 11
+  fruit:
+    dormant: false
+    count: 6
+  time:
+    max: 60
+  clock:
+    enabled: true
+    min: 40
+  captureplus: true

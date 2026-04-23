@@ -1,0 +1,63 @@
+#Classic :   capture will be beyond and move horizontal classic move
+#power := kings board, relay
+#pod :  no fruit bearing,  no capture plus
+
+name: classic_power_pod
+display: Classic Power Pod
+version: "cwd-0.001"
+status: OK
+tier: 1
+options:
+  - easy
+  - medium
+  - hard
+
+doc: docs/text/rules_classic_power_pod.txt
+
+rule:
+  algo: "classic"
+  capture: "beyond"
+  json: "engine/rules/json/pal.json"
+  nplayer: 2
+  kingzpit: true
+  relay: true
+
+easy:
+  level: "beginner"
+  base:
+    nseeds: 4
+    npits: 5
+  fruit:
+    dormant: true
+  time:
+    max: 200
+  clock:
+    enabled: false
+  captureplus: false
+
+medium:
+  level: "intermediate"
+  base:
+    nseeds: 6
+    npits: 7
+  fruit:
+    dormant: true
+  time:
+    max: 90
+  clock:
+    enabled: false
+  captureplus: false
+
+hard:
+  level: "expert"
+  base:
+    nseeds: 12
+    npits: 11
+  fruit:
+    dormant: True
+  time:
+    max: 60
+  clock:
+    enabled: true
+    min: 40
+  captureplus: false

@@ -14,6 +14,7 @@
 #    Date      :  02/03/2026
 #######################################################################
 import copy
+
 import engine.src.board.abstractboard as abx
 import engine.src.common as common
 import engine.src.pit.basicpit as basic
@@ -120,13 +121,14 @@ class Board(abx.baseboard):
             pit_type=data["pitType"],
             special_pits=data.get("specialPits", []),
         )
-    def options(self,side):
+
+    def options(self, side):
         if (side < 0) or (side >= self.n_side) or (self.ippo == side):
             return None
-        ret=[]
+        ret = []
         for guzhi in self.sides[side]:
             try:
-                kaai = int(guzhi) 
+                kaai = int(guzhi)
                 if kaai > 0:
                     ret.append(guzhi.index)
             except Exception as e:
@@ -138,41 +140,56 @@ class Board(abx.baseboard):
         self.anumathi = True
         self.ippo_guzhi = None
         return ret
-    def relay(self):
-        if not self.thodair:
-            return [False , None]
-        self.ippo_guzhi  = next(self.ippo_guzhi)
-        return self._go()
 
-    def _check_side(self,index):
-        #check index is belong to side.
+    def relay(self):
+        ret = [False, None]
+        if not self.thodair:
+            return ret
+        self.thodair = False
+        try:
+            self.ippo_guzhi = next(self.ippo_guzhi)
+            ret = self._go()
+        except Exception as e:
+            self.logger.error(f"exception/relay:{self.ippo}:{e}")
+            return [True, 0]
+        return ret
+
+    def _check_side(self, index):
+        # check index is belong to side.
         for guzhi in self.sides[self.ippo]:
-            if index == guzhi.index:
+            if (index == guzhi.index) and (int(guzhi) > 0):
                 self.ippo_guzhi = guzhi
                 return True
-        if not check:
-            return False
-            
+        return False
+
     def move(self, index):
-        if not ( self.anumathi and super().move(index) ):
+        self.thodair = False
+        ret = super().move(index)
+        if not (self.anumathi and ret[0]):
             return [False, None]
-        if not self._check_side(index):
-            return [False, None]
-        return self._go()
+        try:
+            if not self._check_side(index):
+                ret = [False, None]
+            else:
+                ret = self._go()
+        except Exception as e:
+            self.logger.error(f"exception/move:{self.ippo}:{e}")
+            return [True, 0]
+        return ret
 
     def _go(self):
         kai = copy.copy(self.ippo_guzhi)
-        while not self.ippo_guzhi.isCapture():
-            self.ippo_guzhi  = next(self.ippo_guzhi)
-            self.ippo_guzhi + a
-        ret = self.ippo_guzhi.get()
-        if (ret > 0):
-            self.thodair = True
+        rett = True
+        while not rett:
+            self.ippo_guzhi = next(self.ippo_guzhi)
+            rett = self.ippo_guzhi + kai
+        if self.ippo_guzhi.isCapture():
+            ret = self.ippo_guzhi.get()
+            if ret > 0:
+                self.thodair = True
+            else:
+                self.thodair = False
+            return [True, ret]
         else:
             self.thodair = False
-        return [True, ret]
-            
-        
-        
-        
-        
+            return [True, 0]
