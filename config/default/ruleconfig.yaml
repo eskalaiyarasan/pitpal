@@ -1,28 +1,26 @@
 # pitpal_rule_config.yaml
 
-engine:
-  board:
-    base:
-      nseeds: 5 # int – seeds per pit (example)
-      npits: 6 # int – pits per side (example)
-      nside: 2 # int – number of sides (usually 2)
-    fruit:
-      dormant: true # bool – whether fruiting is disabled
-      period: 3 # int – number of moves/turns between fruiting
-    time:
-      max: 180 # int – seconds per move
-      enabled: true # bool – enable per-move time control
-    clock:
-      enabled: false # bool – enable game clock (overall)
-      min: 10 # int – total minutes per side (if enabled)
-    level: "beginner"
-    captureplus: false # bool – enable extra capture behaviors
 
-  rule:
+engine:
     algo: "classic" # str – algorithm name
     json: "engine/rules/json/pal.json" # str – engine identifier
-    nPlayer: 2
-    capture: "beyond"
-    kingzpit: false
-
-  yaml: "config/default/ruleconfig.yaml" # str – schema/config version tag
+    players: 
+      min: 2
+      max: 2
+    yaml: "config/default/ruleconfig.yaml" # str – schema/config version tag
+    level: "easy"
+    "mode" : "one"
+    "tier" : "pod"
+    details:
+      base:
+        nseeds: 5 # int – seeds per pit (example)
+        npits: 6 # int – pits per side (example)
+        nside: 2 # int – number of sides (usually 2)
+      fruit: 0 # int – number of moves/turns between fruiting
+      time:
+        max: 180 # int – seconds per move
+        enabled: true # bool – enable per-move time control
+      clock:
+        enabled: false # bool – enable game clock (overall)
+        min: 10 # int – total minutes per side (if enabled)
+      specialPits:[]

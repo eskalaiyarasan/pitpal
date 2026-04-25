@@ -19,6 +19,9 @@ rule:
   json: "engine/rules/json/pal.json"
   mode: "square"
   tier: "pod"
+  players:
+    min: 2
+    max: 2
 
 easy:
   base:

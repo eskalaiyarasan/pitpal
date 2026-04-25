@@ -18,8 +18,7 @@
           "enum": ["beyond", "opposite", "adjacent"]
         },
         "Plus": {
-          "type": "boolean",
-          "default": false
+          "$ref": "engine/rules/schema/boolean.schema.json#/$defs/Bool"
         },
         "Param": {
           "$ref": "engine/rules/schema/parameter.schema.json#/$defs/Parameter"

@@ -1,4 +1,4 @@
-engine:
+event:
   level: "single"
   yaml: "config/default/eventconfig.yaml"
   param:

@@ -19,7 +19,7 @@
           "default": "normal"
         },
         "Value": {
-          "type": "integer"
+          "$ref": "engine/rules/schema/integer.schema.json#/$defs/Integer"
         },
         "Param": {
           "$ref": "engine/rules/schema/parameter.schema.json#/$defs/Parameter"

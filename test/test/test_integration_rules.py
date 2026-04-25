@@ -25,10 +25,10 @@ def engine_yaml_dir(logging_config, tmp_path):
 @pytest.mark.parametrize(
     "env_level, cli_level, expected",
     [
-        (None, None, "beginner"),  # YAML only
-        ("easy", None, "beginner"),  # ENV overrides YAML
-        ("easy", "hard", "expert"),  # CLI overrides ENV
-        (None, "hard", "expert"),  # CLI overrides YAML
+        (None, None, "easy"),  # YAML only
+        ("easy", None, "easy"),  # ENV overrides YAML
+        ("easy", "hard", "hard"),  # CLI overrides ENV
+        (None, "hard", "hard"),  # CLI overrides YAML
     ],
 )
 def test_config_priority(engine_yaml_dir, monkeypatch, env_level, cli_level, expected):

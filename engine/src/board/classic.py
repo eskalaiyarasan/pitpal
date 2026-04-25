@@ -28,14 +28,11 @@ import utils.logging.pitpal_logger as pl
 def create_pit(index, seeds, typee, prev, back, special, notifyy):
     seeds = 0 if special else seeds
 
-    if typee["Type"] == "normalPlus":
+    if special:
+            return king.kingzpit(index, seeds, prev, back)
+    elif typee["Type"] == "normalPlus":
         value = typee["Value"]
-        if special:
-            return modd.modpit(index, seeds, king.kingzpit, value, notifyy, prev, back)
-        else:
-            return modd.modpit(index, seeds, basic.basicpit, value, notifyy, prev, back)
-    elif special:
-        return king.kingzpit(index, seeds, prev, back)
+        return modd.modpit(index, seeds, basic.basicpit, value, notifyy, prev, back)
     else:
         return basic.basicpit(index, seeds, prev, back)
 

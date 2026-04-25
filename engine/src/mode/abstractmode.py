@@ -6,10 +6,13 @@ from enum import Enum
 import utils.logging.pitpal_logger as pl
 
 
-class basetier:
+class basemode:
     def __init__(self):
         self.logger = pl.PitPalLogger.get_logger()
 
     @abstractmethod
     def init(self, config):
+        pass
+    @abstractmethod
+    def get_json(self):
         pass

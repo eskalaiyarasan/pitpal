@@ -19,7 +19,10 @@ rule:
   json: "engine/rules/json/pal.json"
   mode: "plus"
   tier: "pod"
-
+  players:
+    min: 2
+    max: 2
+    
 easy:
   base:
     nseeds: 4

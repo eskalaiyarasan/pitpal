@@ -19,13 +19,15 @@ rule:
   json: "engine/rules/json/pal.json"
   mode: "power"
   tier: "pro"
+  players:
+    min: 2
+    max: 2
 
 easy:
   base:
     nseeds: 4
     npits: 5
-  fruit:
-    count: 3
+  fruit: 3
   time:
     max: 200
   clock:
@@ -36,8 +38,7 @@ medium:
   base:
     nseeds: 6
     npits: 7
-  fruit:
-    count: 4
+  fruit: 4
   time:
     max: 90
   clock:
@@ -48,9 +49,7 @@ hard:
   base:
     nseeds: 10
     npits: 11
-  fruit:
-    dormant: false
-    count: 6
+  fruit: 6
   time:
     max: 60
   clock:

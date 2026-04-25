@@ -34,6 +34,9 @@ class EngineConfigManager(Singleton):
                 "--engine-yaml",
                 "--engine-rule",
                 "--engine-level",
+                "--engine-mode",
+                "--engine-tier",
+                "--engine-algo",
                 "--engine-dir",
             ]
             self._initialized = True
@@ -47,11 +50,11 @@ class EngineConfigManager(Singleton):
 
     def get_config(self, cli_args, rule=0):
         env_vars = el.get_env(self.prefix)
-        self.logger.debug(f"rules config manager <| {env_vars} ")
-        self.logger.debug(f"rules config manager <:| {cli_args} ")
+        self.logger.debug(f"rules config env <| {env_vars} ")
+        self.logger.debug(f"rules config cli <:| {cli_args} ")
         default_yaml = "config/default/ruleconfig.yaml"
         args = bb.merge(cli_args, env_vars)
-        self.logger.debug(f"rules config manager >|<| {args} ")
+        self.logger.debug(f"rules config merged >|<| {args} ")
         default_yaml = self.derive_default_yaml(args, default_yaml)
         self.logger.debug("default_yaml:" + str(default_yaml))
         builder = bb.ConfigBuilder({}, {}, default_yaml)
@@ -59,6 +62,7 @@ class EngineConfigManager(Singleton):
 
     def _find_engine_config(self, input_name, directory="config/system/engine/"):
         self.logger.info(f"_find_engine_config :: {input_name}")
+        
 
         # Check if directory exists to avoid errors
         if not os.path.exists(directory):
@@ -78,7 +82,6 @@ class EngineConfigManager(Singleton):
                         if isinstance(content, dict):
                             # Extract values and compare against your criteria
                             status = content.get("status")
-                            tier = content.get("tier")
                             name = content.get("name")
                             clean_name = (
                                 str(name).replace("\r", "").replace("\n", "").strip()
@@ -136,6 +139,11 @@ class EngineConfigManager(Singleton):
                 engine_yaml = args[param]
             elif args["engine.rule"] is not None:
                 engine_yaml = self._find_engine_config(args["engine.rule"], directory)
+            elif ( args["engine.mode"] is not None ) and (args["engine.tier"] is not None)  and (args["engine-algo"] is not None):
+                engine_rule = str(args["engine.algo"]).strip() + "-"
+                engine_rule += str(args["engine.mode"]).strip() + "-"
+                engine_rule += str(args["engine.tier"]).strip() +  ".yaml"
+                engine_yaml = self._find_engine_config(args["engine.rule"], directory)
             else:
                 self.logger.error(
                     "rules config manager : not able to find rules, switch to default"
@@ -143,6 +151,9 @@ class EngineConfigManager(Singleton):
         except Exception as e:
             self.logger.error("derive_default_yaml: " + str(args))
             self.logger.error(f"Failed: {e}")
+
+        if "engine.level" not in args or args["engine.level"] is None:
+            args["engine.level"] = "basic"
 
         engine_yaml_data = None
         if engine_yaml is not None and os.path.exists(engine_yaml):
@@ -161,21 +172,18 @@ class EngineConfigManager(Singleton):
         with open(default_yaml, "r") as file:
             default_yaml_data = yaml.safe_load(file)
         if engine_yaml_data:
-            overrides = bb.deep_merge(
-                engine_yaml_data["rule"], default_yaml_data[self.prefix]["rule"]
-            )
-            default_yaml_data[self.prefix]["rule"] = overrides
-            if (
-                "engine.level" not in args
-                or args["engine.level"] not in engine_yaml_data["options"]
-            ):
-                args["engine.level"] = engine_yaml_data["options"][0]
-                self.logger.error(
-                    "rules config manager :level is not found switch to default"
-                )
-            changes = engine_yaml_data[args["engine.level"]]
-            overrides = bb.deep_merge(changes, default_yaml_data[self.prefix]["board"])
-            default_yaml_data[self.prefix]["board"] = overrides
+        #    default_yaml_data[self.prefix]["algo"] = engine_yaml_data["rule"]["algo"]
+        #    default_yaml_data[self.prefix]["mode"] = engine_yaml_data["rule"]["mode"]
+        #    default_yaml_data[self.prefix]["tier"] = engine_yaml_data["rule"]["tier"]
+        #    default_yaml_data[self.prefix]["json"] = engine_yaml_data["rule"]["json"]
+        #    default_yaml_data[self.prefix]["players"] = engine_yaml_data["rule"]["players"]
+           if args["engine.level"] in engine_yaml_data["options"]:
+               engine_yaml_data["rule"]["level"] = args["engine.level"]
+           else:
+               engine_yaml_data["rule"]["level"] = engine_yaml_data["options"][0]
+           default_yaml_data[self.prefix] = bb.merge(engine_yaml_data["rule"] ,  default_yaml_data[self.prefix] ) 
+           level = default_yaml_data[self.prefix]["level"] 
+           default_yaml_data[self.prefix]["details"] = bb.merge(engine_yaml_data[level], default_yaml_data[self.prefix]["details"])
         else:
             self.logger.error(
                 "rules config manager ??: config not found switch to default"

@@ -1,7 +1,9 @@
 from dataclasses import dataclass
+from typing import List
 
-module_name="rule"
+module_name="engine"
 
+PitRule = List[int]
 @dataclass(frozen=True)
 class TimePerMove:
     max: int
@@ -15,41 +17,35 @@ class ClockRule:
 
 
 @dataclass(frozen=True)
-class Fruiting:
-    dormant: bool
-    period: int
-
-@dataclass(frozen=True)
-class BoardConfig:
+class BaseRule:
     nseeds: int
     npits: int
     nside: int
 
 @dataclass(frozen=True)
-class VarRuleConfig:
-    board: BoardConfig
-    fruit: Fruiting
+class DetailRuleConfig:
+    base: BaseRule
+    fruit: int
     time: TimePerMove
     clock: ClockRule
-    kingzpit: bool
-    capture: str
-    captureplus: bool 
+    specialPits: PitRule
 
-
-@dataclass(frozen=True)
-class FixedRuleConfig:
-    level: str
-    algo: str 
-    engine:str 
-    nplayer:int
-
+@dataclass(frozen = True)
+class MinMaxPlayers:
+    min: int
+    max: int 
 
 @dataclass(frozen=True)
 class RuleConfig:
-    var: VarRuleConfig
-    fixed: FixedRuleConfig
+    level: str
+    mode: str
+    tier: str
+    json: str
+    algo: str
+    players:MinMaxPlayers
+    details: DetailRuleConfig
     yaml: str
 
 @dataclass(frozen=True)
 class PitpalRuleConfig:
-    rule: RuleConfig
+    engine: RuleConfig

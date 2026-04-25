@@ -5,7 +5,7 @@ name: classic_one_pod
 display: Classic One Pod
 version: "cod-0.001"
 status: OK
-tier: 1
+
 options:
   - easy
   - medium
@@ -18,9 +18,11 @@ rule:
   json: "engine/rules/json/pal.json"
   tier: pod
   mode: one
+  players:
+    min: 2
+    max: 2
 
 easy:
-  level: "beginner"
   base:
     nseeds: 4
     npits: 5
@@ -30,7 +32,6 @@ easy:
     enabled: false
 
 medium:
-  level: "intermediate"
   base:
     nseeds: 6
     npits: 7
@@ -40,7 +41,6 @@ medium:
     enabled: false
 
 hard:
-  level: "expert"
   base:
     nseeds: 12
     npits: 11

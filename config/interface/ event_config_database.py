@@ -6,6 +6,7 @@ from typing import Literal, Union
 class CloudEventConfig:
     url: str
     auth: str
+    server: bool
     type: Literal["cloud"] = "cloud"
 
 
@@ -14,6 +15,7 @@ class RemoteEventConfig:
     ip: str
     port: int
     auth: str
+    server: bool
     type: Literal["remote"] = "remote"
 
 
@@ -22,7 +24,7 @@ class LocalEventConfig:
     path: str
     auth: str
     proto: str
-    mode: str
+    server: bool
     maxie: int
     type: Literal["local"] = "local"
 

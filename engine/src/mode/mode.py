@@ -3,6 +3,7 @@ import engine.src.mode.one as one
 import engine.src.mode.plus as plus
 import engine.src.mode.power as power
 import engine.src.mode.square as square
+import config.interface.rule_config_database as rm
 
 _mode = None
 
@@ -22,8 +23,9 @@ def destroy():
     return True
 
 
-def init_mode(typee, config):
+def init_mode(config : rm.PitpalRuleConfig):
     global _mode
+    typee = config.engine.mode
     if _mode is not None:
         raise common.IllegalOperation("mode is already created")
     elif typee == "one":

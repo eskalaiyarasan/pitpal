@@ -21,7 +21,7 @@
       "Options": null,
       "Default": "0",
       "Value": "0",
-      "Enabled": true,
+      "Enabled": false,
       "Config": "fixed",
       "Min": "0",
       "Max": "1"

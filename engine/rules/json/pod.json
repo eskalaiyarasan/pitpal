@@ -1,0 +1,44 @@
+{
+  "vRule": "r00.00.1001",
+  "vSchema": "s00.00.002",
+  "board": {
+    "pitType":{
+        "Type":"enum",
+        "SubType" : "normal",
+        "Value":{
+            "Type":"integer",
+            "Param":{
+                "Options": null,
+                "Default": "7",
+                "Value": "7",
+                "Enabled": false,
+                "Config": "fixed",
+                "Min": "7",
+                "Max": "7"
+            }
+        },
+        "Param":{
+            "Options": null,
+            "Default": "normal",
+            "Value": "normal",
+            "Enabled": true,
+            "Config": "fixed",
+            "Min": "normal",
+            "Max": "normalplus"
+        }
+    }
+  },
+  "capture": {
+    "Plus" :{
+        "Param" :{
+            "Options": null,
+            "Default": "0",
+            "Value": "0",
+            "Enabled": false,
+            "Config": "fixed",
+            "Min": "0",
+            "Max": "1"
+        }
+    }
+  }
+}

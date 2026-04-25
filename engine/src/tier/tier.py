@@ -1,6 +1,7 @@
 import engine.src.common as common
 import engine.src.tier.pod as pod
 import engine.src.tier.pro as pro
+import config.interface.rule_config_database as rm
 
 _tier = None
 
@@ -8,7 +9,7 @@ _tier = None
 def get_tier():
     global _tier
     if _tier is None:
-        raise common.IllegalConfiguration("No valid board found")
+        raise common.IllegalConfiguration("No valid game tier found")
     return _tier
 
 
@@ -20,14 +21,15 @@ def destroy():
     return True
 
 
-def init_tier(typee, config):
+def init_tier(config: rm.PitpalRuleConfig):
     global _tier
+    typee = config.engine.tier
     if _tier is not None:
-        raise common.IllegalOperation("board is already created")
+        raise common.IllegalOperation("tier is already created")
     if typee == "pro":
         _tier = pro.tier.from_db(config)
     if typee == "pod":
         _tier = pod.tier.from_db(config)
     else:
-        raise common.IllegalConfiguration("unknown board selected")
+        raise common.IllegalConfiguration("unknown tier selected {typee}")
     return _tier

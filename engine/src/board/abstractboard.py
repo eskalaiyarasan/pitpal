@@ -34,3 +34,8 @@ class baseboard:
     @abstractmethod
     def repr(self):
         pass
+
+    @abstractmethod
+    def get_json(self):
+        pass
+    
