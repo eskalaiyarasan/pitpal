@@ -14,8 +14,8 @@
         },
 
         "SubType": {
-          "type": "string",
-          "enum": ["classic", "silver", "spiral", "modern"]
+          "type": "array",
+          "enum": ["classic", "snake", "spiral", "dark"]
         },
         "Param": {
           "$ref": "engine/rules/schema/parameter.schema.json#/$defs/Parameter"

@@ -39,11 +39,16 @@ def create_pit(index, seeds, typee, prev, back, special, notifyy):
 
 class Board(abx.baseboard):
     def __init__(self, pits_per_side, n_side, n_seeds, pit_type, special_pits=None):
-        self.pits_per_side = common.check_enabled_ret_value(pits_per_side)
-        self.n_side = common.check_enabled_ret_value(n_side)
-        self.n_seeds = common.check_enabled_ret_value(n_seeds)
-        self.pit_type = pit_type
-        self.special_pits = special_pits if special_pits is not None else []
+        self.pits_per_side = common.get_param_value(pits_per_side)
+        self.n_side = common.get_param_value(n_side)
+        self.n_seeds = common.get_param_value(n_seeds)
+        self.pit_type={}
+        self.pit_type["Type"]= common.get_param_value(pit_type)
+        self.pit_type["Value"]= common.get_param_value(pit_type["Value"])
+        if special_pits is not None:
+            self.special_pits = common.get_param_value(special_pits)
+        else:
+            self.special_pits = []
         self.logger = pl.PitPalLogger.get_logger()
         self.ippo = self.n_side
         self.anumathi = False
@@ -116,8 +121,9 @@ class Board(abx.baseboard):
             n_side=data["nSide"],
             n_seeds=data["nSeeds"],
             pit_type=data["pitType"],
-            special_pits=data.get("specialPits", []),
+            special_pits=data["kingzpits"],
         )
+    
 
     def options(self, side):
         if (side < 0) or (side >= self.n_side) or (self.ippo == side):
@@ -181,12 +187,9 @@ class Board(abx.baseboard):
             self.ippo_guzhi = next(self.ippo_guzhi)
             rett = self.ippo_guzhi + kai
         if self.ippo_guzhi.isCapture():
-            ret = self.ippo_guzhi.get()
-            if ret > 0:
-                self.thodair = True
-            else:
-                self.thodair = False
-            return [True, ret]
+            [ret , ret_val] = self.ippo_guzhi.get(self.ippo )
+            self.thodair = ret
+            return [ret , ret_val]
         else:
             self.thodair = False
             return [True, 0]

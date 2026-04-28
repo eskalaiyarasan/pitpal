@@ -67,8 +67,8 @@ class modpit(bt.basepit):
     def __setitem__(self, index: int, value: int):
         self.core[index] = value
 
-    def get(self):
-        return self.core.get()
+    def get(self, side):
+        return self.core.get(side)
 
     def isCapture(self):
         return self.capture

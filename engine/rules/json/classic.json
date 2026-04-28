@@ -16,7 +16,7 @@
     },
     "nSide": {
       "Param": {
-        "Options": null,
+        "Options": ["2", "3", "4"],
         "Default": "2",
         "Value": "2",
         "Enabled": true,
@@ -74,6 +74,7 @@
       "Config": "fixed",
       "Min": "1",
       "Max": "1"
-    }
+    },
+    "Type":"boolean"
   }
 }

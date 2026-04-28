@@ -23,6 +23,7 @@ import utils.jsonUtils.pitpal_json_schema_utils as Jsu
 class kingzpit(basic.basicpit):
     def __init__(self, index, seeds, prev=None, back=None, active=True):
         super().__init__(index, 0, prev, back, active)
+        self.share=[]
 
     def __copy__(self):
         raise cm.IllegalOperation(f"KingzPit{self.index} selection not allowed")
@@ -48,3 +49,10 @@ class kingzpit(basic.basicpit):
             a.link = self.link
             a.prev = self.prev
             return ret
+    def get(self, side):
+        if not self.capture:
+            return [False, 0]
+        while len(self.share) <= side:
+            self.share.append(0)
+        self.share[side] += 1
+        return [True, 0]

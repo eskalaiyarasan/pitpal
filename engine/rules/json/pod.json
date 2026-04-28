@@ -38,7 +38,8 @@
             "Config": "fixed",
             "Min": "0",
             "Max": "1"
-        }
+        },
+        "Type":"boolean"
     }
   }
 }

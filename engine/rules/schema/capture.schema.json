@@ -14,7 +14,7 @@
         },
 
         "SubType": {
-          "type": "string",
+          "type": "array",
           "enum": ["beyond", "opposite", "adjacent"]
         },
         "Plus": {

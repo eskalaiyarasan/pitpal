@@ -10,9 +10,12 @@
       "properties": {
         "Type": {
           "type": "string",
-          "const": "array:integer"
+          "const": "array"
         },
-
+        "SubType":{
+          "type": "string",
+          "const":"integer"
+        },
         "Value": {
           "type": "array",
           "items": {

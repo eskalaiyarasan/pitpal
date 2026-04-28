@@ -21,7 +21,7 @@ class basepit:
             self.storage[ppty] = value
 
     @abstractmethod
-    def get(self):
+    def get(self, side):
         pass
 
     @abstractmethod

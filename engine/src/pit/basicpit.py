@@ -103,13 +103,13 @@ class basicpit(bt.basepit):
                 link.active = False
                 link.value = -1
 
-    def get(self):
+    def get(self, side):
         if self.active:
             value = self.value
             self.value = 0
             self.capture = False
-            return value
-        return None
+            return [True, value]
+        return [False, 0]
 
     def isCapture(self):
         return self.capture
